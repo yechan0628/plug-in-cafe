@@ -725,11 +725,28 @@ function renderFloorPlanGrid(cafe, floorNum, targetGridId) {
             else if (element.shape === "bar") shapeIcon = "stool";
             else if (element.shape === "communal") shapeIcon = "table_restaurant";
             
+            // Clean label of floor prefixes
+            const cleanLabel = element.label.replace("1층 ", "").replace("2층 ", "");
+            const labelParts = cleanLabel.split(" ");
+            let labelContentHtml = "";
+            
+            if (labelParts.length > 1) {
+                labelContentHtml = labelParts.map(part => `
+                    <div style="font-size: 7.5px; line-height: 1; font-weight: 800; white-space: nowrap; text-align: center; width: 100%; margin: 0; padding: 0;">
+                        ${part}
+                    </div>
+                `).join("");
+            } else {
+                labelContentHtml = `
+                    <div style="font-size: 8px; line-height: 1; font-weight: 800; white-space: nowrap; text-align: center; width: 100%; margin: 0; padding: 0;">
+                        ${cleanLabel}
+                    </div>
+                `;
+            }
+            
             cell.innerHTML = `
-                <span class="material-symbols-outlined" style="font-size: 14px; opacity: 0.85; margin-bottom: 2px;">${shapeIcon}</span>
-                <span style="font-size: 8px; line-height: 1.1; display: block; font-weight: 800; white-space: nowrap; text-align: center; width: 100%;">
-                    ${element.label.replace("1층 ", "").replace("2층 ", "").replace(/\s+/g, "")}
-                </span>
+                <span class="material-symbols-outlined" style="font-size: 13px; opacity: 0.85; margin-bottom: 1px;">${shapeIcon}</span>
+                ${labelContentHtml}
             `;
             
             // Seat Click Interactivity (Toggle Busy/Free)
