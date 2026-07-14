@@ -479,11 +479,18 @@ function renderMap() {
         pinBody.setAttribute("class", "pin-body");
         pinBody.setAttribute("d", "M0 -35 C-12 -35 -15 -25 -15 -15 C-15 -5 0 0 0 0 C0 0 15 -5 15 -15 C15 -25 12 -35 0 -35 Z");
         
+        // White background circle to make logo background white
+        const bgCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        bgCircle.setAttribute("cx", "0");
+        bgCircle.setAttribute("cy", "-20");
+        bgCircle.setAttribute("r", "13");
+        bgCircle.setAttribute("fill", "#FFFFFF");
+        
         // Logo Circle filled with Pattern
         const logoCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
         logoCircle.setAttribute("cx", "0");
         logoCircle.setAttribute("cy", "-20");
-        logoCircle.setAttribute("r", "10.5");
+        logoCircle.setAttribute("r", "13");
         logoCircle.setAttribute("fill", `url(#logo-pattern-${cafe.id})`);
         
         // Text label
@@ -497,6 +504,7 @@ function renderMap() {
         
         marker.appendChild(glow);
         marker.appendChild(pinBody);
+        marker.appendChild(bgCircle);
         marker.appendChild(logoCircle);
         marker.appendChild(text);
         
