@@ -340,9 +340,26 @@ function augmentCafeDatabase() {
                     }
                 }
             }
+            
+            // 4. Assign dynamic Column Spanning based on size descriptions
+            if (item.type === "seat") {
+                item.span = 1; // default (1-person seat)
+                if (item.label) {
+                    const lbl = item.label.toLowerCase();
+                    if (lbl.includes("2인석") || lbl.includes("소파") || lbl.includes("라운지") || lbl.includes("테라스") || lbl.includes("작업대")) {
+                        item.span = 2; // 2-person wide proportion
+                    } else if (lbl.includes("스터디") || lbl.includes("communal")) {
+                        item.span = 3; // 3-person / communal desk proportion
+                    }
+                }
+            } else if (item.type === "counter") {
+                item.span = 2;
+            } else {
+                item.span = 1;
+            }
         });
         
-        // 4. Inject physical table elements into the layout grid for realistic floor plan visualization
+        // 5. Inject physical table elements into the layout grid for realistic floor plan visualization
         const augmentedSeats = [];
         let seatCount = 0;
         cafe.seats.forEach((item, index) => {
@@ -351,10 +368,13 @@ function augmentCafeDatabase() {
             if (item.type === "seat") {
                 seatCount++;
                 if (seatCount % 3 === 0) {
+                    // Match the table size to surrounding seats: if communal, table spans 2 or 3
+                    const tableSpan = (item.span === 3) ? 2 : 1;
                     augmentedSeats.push({
                         id: `T-Gen-${cafe.id}-${index}`,
                         type: "table",
-                        floor: item.floor
+                        floor: item.floor,
+                        span: tableSpan
                     });
                 }
             }
@@ -552,24 +572,12 @@ function renderCafeList() {
     });
 }
 
-// Global variable for active floor in bottom sheet
-let selectedFloor = 1;
-
-// Change active floor in bottom sheet
-function changeFloor(floorNum) {
-    selectedFloor = floorNum;
-    if (selectedCafe) {
-        renderBottomSheet(selectedCafe);
-    }
-}
-
 // Select a cafe and slide up the bottom sheet
 function selectCafe(id) {
     const cafe = cafes.find(c => c.id === id);
     if (!cafe) return;
     
     selectedCafe = cafe;
-    selectedFloor = 1; // Default to 1st floor when opening a cafe
     
     // Highlight Active card and marker
     document.querySelectorAll(".cafe-card").forEach(c => c.classList.remove("active"));
@@ -603,12 +611,27 @@ function renderBottomSheet(cafe) {
 
     // Check if the cafe has a 2nd floor
     const hasSecondFloor = cafe.seats.some(s => s.floor === 2);
-    let floorSelectorHtml = "";
+    
+    let floorPlansHtml = `
+        <!-- Floor 1 Box -->
+        <div class="floor-plan-box">
+            <div class="floor-plan-box-title">
+                <span class="material-symbols-outlined">layers</span>
+                <span>1층 (1F) 좌석 배치</span>
+            </div>
+            <div class="floor-plan-grid" id="floor-plan-grid-f1"></div>
+        </div>
+    `;
+
     if (hasSecondFloor) {
-        floorSelectorHtml = `
-            <div class="floor-selector">
-                <button class="floor-tab ${selectedFloor === 1 ? 'active' : ''}" onclick="changeFloor(1)">1층 (1F)</button>
-                <button class="floor-tab ${selectedFloor === 2 ? 'active' : ''}" onclick="changeFloor(2)">2층 (2F)</button>
+        floorPlansHtml += `
+            <!-- Floor 2 Box -->
+            <div class="floor-plan-box">
+                <div class="floor-plan-box-title">
+                    <span class="material-symbols-outlined">layers</span>
+                    <span>2층 (2F) 좌석 배치</span>
+                </div>
+                <div class="floor-plan-grid" id="floor-plan-grid-f2"></div>
             </div>
         `;
     }
@@ -643,30 +666,31 @@ function renderBottomSheet(cafe) {
                     <span class="material-symbols-outlined">chair</span>
                     <span>실시간 좌석 배치도 (Floor Plan)</span>
                 </div>
-                ${floorSelectorHtml}
             </div>
-            <div class="floor-plan-legend">
+            <div class="floor-plan-legend" style="margin-bottom: var(--spacing-md);">
                 <div class="legend-item"><div class="legend-color free"></div><span>이용 가능</span></div>
                 <div class="legend-item"><div class="legend-color busy"></div><span>사용 중</span></div>
                 <div class="legend-item"><div class="legend-color no-plug"></div><span>콘센트 없음</span></div>
             </div>
             
-            <div class="floor-plan-grid" id="floor-plan-grid">
-                <!-- Javascript will render grid cells here -->
-            </div>
+            ${floorPlansHtml}
         </div>
     `;
 
-    renderFloorPlanGrid(cafe);
+    renderFloorPlanGrid(cafe, 1, "floor-plan-grid-f1");
+    if (hasSecondFloor) {
+        renderFloorPlanGrid(cafe, 2, "floor-plan-grid-f2");
+    }
 }
 
 // Render Floor Plan Grid
-function renderFloorPlanGrid(cafe) {
-    const grid = document.getElementById("floor-plan-grid");
+function renderFloorPlanGrid(cafe, floorNum, targetGridId) {
+    const grid = document.getElementById(targetGridId);
+    if (!grid) return;
     grid.innerHTML = "";
 
-    // Filter elements belonging to the active floor
-    const floorElements = cafe.seats.filter(s => s.floor === selectedFloor);
+    // Filter elements belonging to the specific floor
+    const floorElements = cafe.seats.filter(s => s.floor === floorNum);
 
     floorElements.forEach((element) => {
         const cell = document.createElement("div");
@@ -681,7 +705,8 @@ function renderFloorPlanGrid(cafe) {
             cell.setAttribute("class", "floor-element");
             cell.style.visibility = "hidden";
         } else if (element.type === "table") {
-            cell.setAttribute("class", "floor-element table");
+            const spanClass = element.span ? `span-${element.span}` : "span-1";
+            cell.setAttribute("class", `floor-element table ${spanClass}`);
             cell.innerHTML = `
                 <span class="material-symbols-outlined" style="font-size: 16px; margin-bottom: 2px;">coffee</span>
                 <span style="font-size: 8px; font-weight: 800; opacity: 0.85;">테이블</span>
@@ -690,8 +715,9 @@ function renderFloorPlanGrid(cafe) {
             const statusClass = element.occupied ? "busy" : "free";
             const plugClass = element.plugged ? "plugged" : "";
             const shapeClass = element.shape ? `${element.shape}-seat` : "square-seat";
+            const spanClass = element.span ? `span-${element.span}` : "span-1";
             
-            cell.setAttribute("class", `floor-element seat ${statusClass} ${plugClass} ${shapeClass}`);
+            cell.setAttribute("class", `floor-element seat ${statusClass} ${plugClass} ${shapeClass} ${spanClass}`);
             cell.setAttribute("title", `${element.label} (${element.plugged ? "콘센트 있음" : "콘센트 없음"})`);
             
             let shapeIcon = "chair";
@@ -709,8 +735,20 @@ function renderFloorPlanGrid(cafe) {
             // Seat Click Interactivity (Toggle Busy/Free)
             cell.addEventListener("click", () => {
                 element.occupied = !element.occupied;
-                renderFloorPlanGrid(cafe);
-                renderBottomSheet(cafe);
+                
+                const hasSecondFloor = cafe.seats.some(s => s.floor === 2);
+                renderFloorPlanGrid(cafe, 1, "floor-plan-grid-f1");
+                if (hasSecondFloor) {
+                    renderFloorPlanGrid(cafe, 2, "floor-plan-grid-f2");
+                }
+                
+                // Update only the statistics paragraph dynamically
+                const stats = getCafeStats(cafe);
+                const statsSummary = document.querySelector(".sheet-left p");
+                if (statsSummary) {
+                    statsSummary.innerText = `총 ${stats.totalPlugCount}개의 콘센트 좌석 중 현재 ${stats.freePlugCount}석 비어있음`;
+                }
+                
                 renderCafeList();
                 renderMap();
             });

@@ -472,16 +472,44 @@ body {
 .legend-color.no-plug { background-color: var(--color-border); border: 1px solid var(--color-accent); }
 
 .floor-plan-grid {
-    background-color: var(--color-bg-base);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    padding: var(--spacing-lg);
+    background: transparent;
     display: grid;
     grid-template-columns: repeat(8, 1fr);
     grid-gap: var(--spacing-sm);
     justify-items: center;
     align-items: center;
     position: relative;
+    width: 100%;
+}
+
+/* Floor Plan Box Card Layout */
+.floor-plan-box {
+    background-color: var(--color-bg-base);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.floor-plan-box-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+/* Spanned seats for wider sizes (e.g. 2-person, communal desks) */
+.floor-element.span-2 {
+    grid-column: span 2;
+    width: 100% !important;
+}
+
+.floor-element.span-3 {
+    grid-column: span 3;
+    width: 100% !important;
 }
 
 .floor-element {
