@@ -727,8 +727,8 @@ function renderFloorPlanGrid(cafe, floorNum, targetGridId) {
             
             cell.innerHTML = `
                 <span class="material-symbols-outlined" style="font-size: 14px; opacity: 0.85; margin-bottom: 2px;">${shapeIcon}</span>
-                <span style="font-size: 8px; line-height: 1; display: block; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; text-align: center;">
-                    ${element.label.replace("1층 ", "").replace("2층 ", "")}
+                <span style="font-size: 8px; line-height: 1.1; display: block; font-weight: 800; white-space: nowrap; text-align: center; width: 100%;">
+                    ${element.label.replace("1층 ", "").replace("2층 ", "").replace(/\s+/g, "")}
                 </span>
             `;
             
