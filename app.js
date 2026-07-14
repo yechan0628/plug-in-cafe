@@ -429,11 +429,13 @@ function createSvgPatterns() {
 function getCafeStats(cafe) {
     const plugSeats = cafe.seats.filter(s => s.type === "seat" && s.plugged);
     const freePlugSeats = plugSeats.filter(s => !s.occupied);
-    const totalPlugCount = plugSeats.length;
-    const freePlugCount = freePlugSeats.length;
     
-    // Many plugs = 50% or more of total seats have plugs, or total plugs >= 6
-    const totalSeats = cafe.seats.filter(s => s.type === "seat").length;
+    // Sum element spans to calculate actual physical seat capacity
+    const totalPlugCount = plugSeats.reduce((sum, s) => sum + (s.span || 1), 0);
+    const freePlugCount = freePlugSeats.reduce((sum, s) => sum + (s.span || 1), 0);
+    
+    const allSeats = cafe.seats.filter(s => s.type === "seat");
+    const totalSeats = allSeats.reduce((sum, s) => sum + (s.span || 1), 0);
     const plugRatio = totalSeats > 0 ? (totalPlugCount / totalSeats) : 0;
     const isManyPlugs = plugRatio >= 0.5 || totalPlugCount >= 6;
     
