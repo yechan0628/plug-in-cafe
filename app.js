@@ -367,7 +367,7 @@ function augmentCafeDatabase() {
                     }
                 }
             } else if (item.type === "counter") {
-                item.span = 2;
+                item.span = 3;
             } else {
                 item.span = 1;
             }
@@ -713,7 +713,8 @@ function renderFloorPlanGrid(cafe, floorNum, targetGridId) {
             cell.setAttribute("class", "floor-element wall");
             cell.innerHTML = '<span class="material-symbols-outlined" style="font-size: 18px;">grid_view</span>';
         } else if (element.type === "counter") {
-            cell.setAttribute("class", "floor-element counter");
+            const spanClass = element.span ? `span-${element.span}` : "span-3";
+            cell.setAttribute("class", `floor-element counter ${spanClass}`);
             cell.innerHTML = `
                 <span class="material-symbols-outlined" style="font-size: 14px; margin-bottom: 2px;">storefront</span>
                 <span style="font-size: 9px; font-weight: 800; line-height: 1; white-space: nowrap;">카운터</span>
