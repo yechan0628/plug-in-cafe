@@ -227,7 +227,7 @@ const cafes = [
         congestion: "mid",
         x: 280,
         y: 560,
-        logoUrl: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=120&auto=format&fit=crop&q=80",
+        logoUrl: "https://upload.wikimedia.org/wikipedia/commons/e/e0/TCB%26TL_wordmark.svg",
         seats: [
             { id: "S1", type: "seat", plugged: true, occupied: false, label: "라운지 01" },
             { id: "S2", type: "seat", plugged: true, occupied: false, label: "라운지 02" },
@@ -254,7 +254,7 @@ const cafes = [
         congestion: "mid",
         x: 600,
         y: 580,
-        logoUrl: "https://images.unsplash.com/photo-1607958996333-41aef7caefaa?w=120&auto=format&fit=crop&q=80",
+        logoUrl: "https://upload.wikimedia.org/wikipedia/ko/a/a2/%ED%83%90%EC%95%A4%ED%83%90%EC%8A%A4_%EB%A1%9C%EA%B3%A0.png",
         seats: [
             // F1: 8 seats
             { id: "S1", type: "seat", plugged: true, occupied: false, label: "1층 01", floor: 1 },
