@@ -677,8 +677,8 @@ function renderBottomSheet(cafe) {
             
             <div style="background-color: var(--color-bg-base); padding: var(--spacing-md); border-radius: var(--radius-sm); border: 1px solid var(--color-border); margin-top: var(--spacing-sm);">
                 <h4 style="font-size: 13px; font-weight: 800; margin-bottom: 6px;">실시간 콘센트 및 좌석 요약</h4>
-                <p class="plug-stats-summary" style="font-size: 14px; font-weight: 700; color: var(--color-status-free);">🔌 콘센트 좌석: 총 ${stats.totalPlugCount}석 중 현재 ${stats.freePlugCount}석 비어있음</p>
-                <p class="total-stats-summary" style="font-size: 13px; font-weight: 700; color: var(--color-secondary); margin-top: 4px;">🪑 전체 일반 좌석: 총 ${stats.totalSeats}석 중 현재 ${stats.freeSeatsCount}석 비어있음</p>
+                <p class="plug-stats-summary" style="font-size: 14px; font-weight: 700; color: var(--color-status-free); margin-bottom: 0;">🔌 콘센트 좌석: 총 ${stats.totalPlugCount}석 중 현재 ${stats.freePlugCount}석 비어있음</p>
+                <p class="total-stats-summary" style="font-size: 13px; font-weight: 700; color: var(--color-secondary); margin-top: 8px;">🪑 전체 일반 좌석: 총 ${stats.totalSeats}석 중 현재 ${stats.freeSeatsCount}석 비어있음</p>
                 <span style="font-size: 11px; color: var(--color-secondary); display: block; margin-top: 6px;">* 좌석 배치도의 좌석을 직접 터치해 가상 점유 상태를 토글할 수 있습니다.</span>
             </div>
         </div>
