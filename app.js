@@ -132,6 +132,127 @@ const cafes = [
             { id: "S5", type: "seat", plugged: true, occupied: false, label: "C-1" },
             { id: "S6", type: "seat", plugged: true, occupied: true, label: "C-2" },
         ]
+    },
+    {
+        id: 6,
+        name: "투썸플레이스 신촌연세로점",
+        rating: 4.4,
+        distance: "250m",
+        address: "서울 서대문구 연세로 12",
+        hours: "08:00 - 23:00",
+        parking: true,
+        congestion: "mid",
+        x: 550,
+        y: 220,
+        logoUrl: "https://upload.wikimedia.org/wikipedia/commons/e/ee/A_Twosome_Place_square_logo.png",
+        seats: [
+            { id: "S1", type: "seat", plugged: true, occupied: false, label: "T1" },
+            { id: "S2", type: "seat", plugged: true, occupied: true, label: "T2" },
+            { id: "S3", type: "seat", plugged: false, occupied: false, label: "T3" },
+            { id: "S4", type: "seat", plugged: false, occupied: false, label: "T4" },
+            { id: "W1", type: "wall" },
+            { id: "C1", type: "counter" },
+            { id: "S5", type: "seat", plugged: true, occupied: false, label: "창가 01" },
+            { id: "S6", type: "seat", plugged: true, occupied: true, label: "창가 02" },
+            { id: "S7", type: "seat", plugged: true, occupied: false, label: "창가 03" },
+            { id: "S8", type: "seat", plugged: true, occupied: true, label: "창가 04" }
+        ]
+    },
+    {
+        id: 7,
+        name: "이디야커피 신촌역점",
+        rating: 4.1,
+        distance: "410m",
+        address: "서울 서대문구 신촌로 109",
+        hours: "08:00 - 22:00",
+        parking: false,
+        congestion: "low",
+        x: 880,
+        y: 130,
+        logoUrl: "https://upload.wikimedia.org/wikipedia/commons/b/b8/Ediya_Coffee_logo.svg",
+        seats: [
+            { id: "S1", type: "seat", plugged: true, occupied: false, label: "창가 01" },
+            { id: "S2", type: "seat", plugged: true, occupied: false, label: "창가 02" },
+            { id: "W1", type: "wall" },
+            { id: "C1", type: "counter" },
+            { id: "S3", type: "seat", plugged: false, occupied: true, label: "테이블 01" },
+            { id: "S4", type: "seat", plugged: false, occupied: false, label: "테이블 02" },
+            { id: "S5", type: "seat", plugged: true, occupied: true, label: "테이블 03" },
+            { id: "S6", type: "seat", plugged: true, occupied: false, label: "테이블 04" }
+        ]
+    },
+    {
+        id: 8,
+        name: "메가MGC커피 신촌점",
+        rating: 4.3,
+        distance: "530m",
+        address: "서울 서대문구 연세로 11",
+        hours: "07:00 - 22:30",
+        parking: false,
+        congestion: "high",
+        x: 850,
+        y: 410,
+        logoUrl: "https://upload.wikimedia.org/wikipedia/commons/7/7b/Mega_MGC_Coffee_logo.png",
+        seats: [
+            { id: "S1", type: "seat", plugged: true, occupied: true, label: "A-1" },
+            { id: "S2", type: "seat", plugged: true, occupied: true, label: "A-2" },
+            { id: "C1", type: "counter" },
+            { id: "S3", type: "seat", plugged: false, occupied: true, label: "B-1" },
+            { id: "S4", type: "seat", plugged: false, occupied: true, label: "B-2" },
+            { id: "S5", type: "seat", plugged: false, occupied: true, label: "B-3" },
+            { id: "S6", type: "seat", plugged: true, occupied: false, label: "C-1" },
+            { id: "S7", type: "seat", plugged: true, occupied: true, label: "C-2" }
+        ]
+    },
+    {
+        id: 9,
+        name: "커피빈 신촌현대백화점점",
+        rating: 4.6,
+        distance: "680m",
+        address: "서울 서대문구 신촌로 83",
+        hours: "09:00 - 22:00",
+        parking: true,
+        congestion: "mid",
+        x: 280,
+        y: 560,
+        logoUrl: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=120&auto=format&fit=crop&q=80",
+        seats: [
+            { id: "S1", type: "seat", plugged: true, occupied: false, label: "라운지 01" },
+            { id: "S2", type: "seat", plugged: true, occupied: false, label: "라운지 02" },
+            { id: "S3", type: "seat", plugged: true, occupied: true, label: "라운지 03" },
+            { id: "S4", type: "seat", plugged: true, occupied: false, label: "라운지 04" },
+            { id: "C1", type: "counter" },
+            { id: "W1", type: "wall" },
+            { id: "S5", type: "seat", plugged: false, occupied: false, label: "테라스 01" },
+            { id: "S6", type: "seat", plugged: false, occupied: true, label: "테라스 02" },
+            { id: "S7", type: "seat", plugged: true, occupied: false, label: "바 01" },
+            { id: "S8", type: "seat", plugged: true, occupied: true, label: "바 02" },
+            { id: "S9", type: "seat", plugged: true, occupied: false, label: "바 03" },
+            { id: "S10", type: "seat", plugged: true, occupied: false, label: "바 04" }
+        ]
+    },
+    {
+        id: 10,
+        name: "탐앤탐스 신촌점",
+        rating: 4.2,
+        distance: "750m",
+        address: "서울 서대문구 연세로5길 26",
+        hours: "00:00 - 24:00",
+        parking: false,
+        congestion: "mid",
+        x: 600,
+        y: 580,
+        logoUrl: "https://images.unsplash.com/photo-1607958996333-41aef7caefaa?w=120&auto=format&fit=crop&q=80",
+        seats: [
+            { id: "S1", type: "seat", plugged: true, occupied: false, label: "1층 01" },
+            { id: "S2", type: "seat", plugged: true, occupied: true, label: "1층 02" },
+            { id: "W1", type: "wall" },
+            { id: "C1", type: "counter" },
+            { id: "S3", type: "seat", plugged: true, occupied: false, label: "2층 01" },
+            { id: "S4", type: "seat", plugged: true, occupied: false, label: "2층 02" },
+            { id: "S5", type: "seat", plugged: false, occupied: true, label: "2층 03" },
+            { id: "S6", type: "seat", plugged: false, occupied: false, label: "2층 04" }
+        ]
     }
 ];
 
