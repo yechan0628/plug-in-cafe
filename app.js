@@ -282,10 +282,85 @@ const mapSvg = document.getElementById("map-svg");
 
 // Initialize application
 function init() {
+    augmentCafeDatabase();
     createSvgPatterns();
     renderMap();
     renderCafeList();
     setupEventListeners();
+}
+
+// Automatically augment cafe database on startup with floor and seat shape metadata
+function augmentCafeDatabase() {
+    cafes.forEach(cafe => {
+        cafe.seats.forEach((item, index) => {
+            // 1. Assign floor default (1)
+            item.floor = 1;
+            
+            // 2. Adjust floor for 2-floor cafes based on labels or splits
+            if (cafe.id === 2) { // Starbucks
+                // Split 12 items: 1-6 are F1, 7-12 are F2
+                if (index >= 6) {
+                    item.floor = 2;
+                    if (item.label) item.label = item.label.replace("창가", "2층 창가").replace("2인석", "2층 2인석").replace("스터디", "2층 스터디");
+                } else {
+                    if (item.label) item.label = "1층 " + item.label;
+                }
+            } else if (cafe.id === 4) { // Hollys
+                if (item.label && item.label.includes("2층")) {
+                    item.floor = 2;
+                }
+            } else if (cafe.id === 6) { // Twosome
+                // Split 10 items: 1-5 F1, 6-10 F2
+                if (index >= 5) {
+                    item.floor = 2;
+                    if (item.label) item.label = "2층 " + item.label;
+                } else {
+                    if (item.label) item.label = "1층 " + item.label;
+                }
+            } else if (cafe.id === 10) { // Tom N Toms
+                if (item.label && item.label.includes("2층")) {
+                    item.floor = 2;
+                }
+            }
+            
+            // 3. Assign shapes/types dynamically based on labels and indexes to create unique structures
+            if (item.type === "seat") {
+                item.shape = "square"; // default
+                
+                if (item.label) {
+                    const lbl = item.label.toLowerCase();
+                    if (lbl.includes("창가") || lbl.includes("바") || lbl.includes("t1") || lbl.includes("t2") || lbl.includes("t3") || lbl.includes("t4")) {
+                        item.shape = "bar";
+                    } else if (lbl.includes("소파") || lbl.includes("라운지") || lbl.includes("2층 01") || lbl.includes("2층 02") || lbl.includes("소파 01") || lbl.includes("소파 02") || lbl.includes("소파 03") || lbl.includes("소파 04")) {
+                        item.shape = "sofa";
+                    } else if (lbl.includes("스터디") || lbl.includes("작업대") || lbl.includes("테라스") || lbl.includes("communal")) {
+                        item.shape = "communal";
+                    } else if (lbl.includes("테이블") || lbl.includes("센터") || lbl.includes("2인석") || lbl.includes("01") || lbl.includes("02") || lbl.includes("03")) {
+                        item.shape = "round";
+                    }
+                }
+            }
+        });
+        
+        // 4. Inject physical table elements into the layout grid for realistic floor plan visualization
+        const augmentedSeats = [];
+        let seatCount = 0;
+        cafe.seats.forEach((item, index) => {
+            augmentedSeats.push(item);
+            
+            if (item.type === "seat") {
+                seatCount++;
+                if (seatCount % 3 === 0) {
+                    augmentedSeats.push({
+                        id: `T-Gen-${cafe.id}-${index}`,
+                        type: "table",
+                        floor: item.floor
+                    });
+                }
+            }
+        });
+        cafe.seats = augmentedSeats;
+    });
 }
 
 // Create SVG patterns dynamically for cafe logos
@@ -477,12 +552,24 @@ function renderCafeList() {
     });
 }
 
+// Global variable for active floor in bottom sheet
+let selectedFloor = 1;
+
+// Change active floor in bottom sheet
+function changeFloor(floorNum) {
+    selectedFloor = floorNum;
+    if (selectedCafe) {
+        renderBottomSheet(selectedCafe);
+    }
+}
+
 // Select a cafe and slide up the bottom sheet
 function selectCafe(id) {
     const cafe = cafes.find(c => c.id === id);
     if (!cafe) return;
     
     selectedCafe = cafe;
+    selectedFloor = 1; // Default to 1st floor when opening a cafe
     
     // Highlight Active card and marker
     document.querySelectorAll(".cafe-card").forEach(c => c.classList.remove("active"));
@@ -514,6 +601,18 @@ function renderBottomSheet(cafe) {
         congestionClass = "high";
     }
 
+    // Check if the cafe has a 2nd floor
+    const hasSecondFloor = cafe.seats.some(s => s.floor === 2);
+    let floorSelectorHtml = "";
+    if (hasSecondFloor) {
+        floorSelectorHtml = `
+            <div class="floor-selector">
+                <button class="floor-tab ${selectedFloor === 1 ? 'active' : ''}" onclick="changeFloor(1)">1층 (1F)</button>
+                <button class="floor-tab ${selectedFloor === 2 ? 'active' : ''}" onclick="changeFloor(2)">2층 (2F)</button>
+            </div>
+        `;
+    }
+
     const sheetContent = document.getElementById("sheet-content");
     sheetContent.innerHTML = `
         <div class="sheet-left">
@@ -539,9 +638,12 @@ function renderBottomSheet(cafe) {
         </div>
         
         <div class="sheet-right">
-            <div class="floor-plan-title">
-                <span class="material-symbols-outlined">chair</span>
-                <span>실시간 좌석 배치도 (Floor Plan)</span>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-sm); flex-wrap: wrap; gap: 8px;">
+                <div class="floor-plan-title" style="margin: 0; display: flex; align-items: center; gap: 6px;">
+                    <span class="material-symbols-outlined">chair</span>
+                    <span>실시간 좌석 배치도 (Floor Plan)</span>
+                </div>
+                ${floorSelectorHtml}
             </div>
             <div class="floor-plan-legend">
                 <div class="legend-item"><div class="legend-color free"></div><span>이용 가능</span></div>
@@ -563,7 +665,10 @@ function renderFloorPlanGrid(cafe) {
     const grid = document.getElementById("floor-plan-grid");
     grid.innerHTML = "";
 
-    cafe.seats.forEach((element) => {
+    // Filter elements belonging to the active floor
+    const floorElements = cafe.seats.filter(s => s.floor === selectedFloor);
+
+    floorElements.forEach((element) => {
         const cell = document.createElement("div");
         
         if (element.type === "wall") {
@@ -575,13 +680,31 @@ function renderFloorPlanGrid(cafe) {
         } else if (element.type === "empty") {
             cell.setAttribute("class", "floor-element");
             cell.style.visibility = "hidden";
+        } else if (element.type === "table") {
+            cell.setAttribute("class", "floor-element table");
+            cell.innerHTML = `
+                <span class="material-symbols-outlined" style="font-size: 16px; margin-bottom: 2px;">coffee</span>
+                <span style="font-size: 8px; font-weight: 800; opacity: 0.85;">테이블</span>
+            `;
         } else if (element.type === "seat") {
             const statusClass = element.occupied ? "busy" : "free";
             const plugClass = element.plugged ? "plugged" : "";
+            const shapeClass = element.shape ? `${element.shape}-seat` : "square-seat";
             
-            cell.setAttribute("class", `floor-element seat ${statusClass} ${plugClass}`);
+            cell.setAttribute("class", `floor-element seat ${statusClass} ${plugClass} ${shapeClass}`);
             cell.setAttribute("title", `${element.label} (${element.plugged ? "콘센트 있음" : "콘센트 없음"})`);
-            cell.innerHTML = `<span>${element.label}</span>`;
+            
+            let shapeIcon = "chair";
+            if (element.shape === "sofa") shapeIcon = "chair_alt";
+            else if (element.shape === "bar") shapeIcon = "stool";
+            else if (element.shape === "communal") shapeIcon = "table_restaurant";
+            
+            cell.innerHTML = `
+                <span class="material-symbols-outlined" style="font-size: 14px; opacity: 0.85; margin-bottom: 2px;">${shapeIcon}</span>
+                <span style="font-size: 8px; line-height: 1; display: block; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; text-align: center;">
+                    ${element.label.replace("1층 ", "").replace("2층 ", "")}
+                </span>
+            `;
             
             // Seat Click Interactivity (Toggle Busy/Free)
             cell.addEventListener("click", () => {

@@ -511,6 +511,64 @@ body {
     font-size: 11px;
 }
 
+/* Floor selector tabs */
+.floor-selector {
+    display: flex;
+    gap: 4px;
+    background-color: var(--color-bg-base);
+    padding: 3px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border);
+}
+
+.floor-tab {
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    border: none;
+    background: none;
+    color: var(--color-secondary);
+    cursor: pointer;
+    border-radius: var(--radius-xs);
+    transition: all 0.2s;
+}
+
+.floor-tab:hover {
+    color: var(--color-primary);
+}
+
+.floor-tab.active {
+    background-color: var(--color-primary);
+    color: #FFF;
+}
+
+/* Dynamic table and seat shapes */
+.floor-element.table {
+    background-color: #D7CCC8;
+    color: var(--color-primary);
+    border-radius: 50%;
+    border: 1.5px dashed var(--color-primary-light);
+}
+
+.floor-element.seat.round-seat {
+    border-radius: 50% !important;
+}
+
+.floor-element.seat.sofa-seat {
+    border-radius: 8px !important;
+    border-width: 2.5px !important;
+    border-style: double !important;
+}
+
+.floor-element.seat.bar-seat {
+    border-radius: 12px 12px 4px 4px !important;
+}
+
+.floor-element.seat.communal-seat {
+    border-radius: 0 !important;
+    border-style: dashed !important;
+}
+
 .floor-element.seat {
     cursor: pointer;
     background-color: #FFF;
