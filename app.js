@@ -11,6 +11,7 @@ const cafes = [
         congestion: "low", // low (여유), mid (보통), high (혼잡)
         x: 250, // SVG map X
         y: 180, // SVG map Y
+        logoUrl: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=100&auto=format&fit=crop&q=80",
         seats: [
             { id: "S1", type: "seat", plugged: true, occupied: false, label: "창가 01" },
             { id: "S2", type: "seat", plugged: true, occupied: false, label: "창가 02" },
@@ -41,6 +42,7 @@ const cafes = [
         congestion: "high",
         x: 480,
         y: 350,
+        logoUrl: "https://upload.wikimedia.org/wikipedia/en/d/d3/Starbucks_Corporation_Logo_2011.svg",
         seats: [
             { id: "S1", type: "seat", plugged: true, occupied: true, label: "센터 01" },
             { id: "S2", type: "seat", plugged: true, occupied: true, label: "센터 02" },
@@ -67,6 +69,7 @@ const cafes = [
         congestion: "mid",
         x: 650,
         y: 190,
+        logoUrl: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=100&auto=format&fit=crop&q=80",
         seats: [
             { id: "S1", type: "seat", plugged: true, occupied: false, label: "바 01" },
             { id: "S2", type: "seat", plugged: true, occupied: false, label: "바 02" },
@@ -91,6 +94,7 @@ const cafes = [
         congestion: "mid",
         x: 720,
         y: 420,
+        logoUrl: "https://www.hollys.co.kr/websrc/images/layout/logo_210302.gif",
         seats: [
             { id: "S1", type: "seat", plugged: true, occupied: true, label: "1층 01" },
             { id: "S2", type: "seat", plugged: true, occupied: false, label: "1층 02" },
@@ -117,6 +121,7 @@ const cafes = [
         congestion: "low",
         x: 180,
         y: 460,
+        logoUrl: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=100&auto=format&fit=crop&q=80",
         seats: [
             { id: "S1", type: "seat", plugged: true, occupied: false, label: "A-1" },
             { id: "S2", type: "seat", plugged: true, occupied: false, label: "A-2" },
@@ -203,10 +208,26 @@ function renderMap() {
         pinBody.setAttribute("class", "pin-body");
         pinBody.setAttribute("d", "M0 -35 C-12 -35 -15 -25 -15 -15 C-15 -5 0 0 0 0 C0 0 15 -5 15 -15 C15 -25 12 -35 0 -35 Z");
         
-        // Pin inner icon (lightning bolt style)
-        const icon = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        icon.setAttribute("d", "M-3 -22 L2 -22 L-2 -15 L3 -15 L-3 -8 L-1 -14 L-5 -14 Z");
-        icon.setAttribute("fill", "#FFF");
+        // Dynamic Clip Path and Brand Image for Marker
+        const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+        const clipPath = document.createElementNS("http://www.w3.org/2000/svg", "clipPath");
+        clipPath.setAttribute("id", `clip-cafe-${cafe.id}`);
+        const clipCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        clipCircle.setAttribute("cx", "0");
+        clipCircle.setAttribute("cy", "-20");
+        clipCircle.setAttribute("r", "10.5");
+        clipPath.appendChild(clipCircle);
+        defs.appendChild(clipPath);
+        marker.appendChild(defs);
+
+        const image = document.createElementNS("http://www.w3.org/2000/svg", "image");
+        image.setAttribute("href", cafe.logoUrl);
+        image.setAttribute("x", "-11");
+        image.setAttribute("y", "-31");
+        image.setAttribute("width", "22");
+        image.setAttribute("height", "22");
+        image.setAttribute("clip-path", `url(#clip-cafe-${cafe.id})`);
+        image.setAttribute("preserveAspectRatio", "xMidYMid slice");
         
         // Text label
         const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
