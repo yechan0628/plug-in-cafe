@@ -136,6 +136,12 @@ const cafes = [
 ];
 
 let selectedCafe = null;
+let zoom = 1.0;
+let viewX = 0;
+let viewY = 0;
+const viewWidth = 1000;
+const viewHeight = 700;
+
 let currentFilters = {
     searchQuery: "",
     manyPlugs: false,
@@ -317,23 +323,32 @@ function renderCafeList() {
         const hasFreePlug = stats.freePlugCount > 0;
         
         card.innerHTML = `
-            <div class="cafe-card-header">
-                <h3 class="cafe-title">${cafe.name}</h3>
-                <div class="cafe-rating">
-                    <span class="material-symbols-outlined star-icon">star</span>
-                    <span>${cafe.rating}</span>
+            <div style="display: flex; gap: var(--spacing-md); align-items: flex-start;">
+                <!-- Cafe Logo -->
+                <div style="flex-shrink: 0;">
+                    <img src="${cafe.logoUrl}" alt="${cafe.name} 로고" style="width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 1px solid var(--color-border); display: block;" />
                 </div>
-            </div>
-            <div class="cafe-meta">
-                <span><span class="material-symbols-outlined" style="font-size: 14px; vertical-align: middle; margin-right: 4px;">map</span>${cafe.address} (${cafe.distance})</span>
-                <span><span class="material-symbols-outlined" style="font-size: 14px; vertical-align: middle; margin-right: 4px;">schedule</span>영업시간: ${cafe.hours}</span>
-            </div>
-            <div class="cafe-badges">
-                <span class="status-badge ${hasFreePlug ? "free" : "busy"}">
-                    콘센트 ${hasFreePlug ? `이용가능 (${stats.freePlugCount}/${stats.totalPlugCount})` : "만석"}
-                </span>
-                <span class="congestion-badge ${congestionClass}">혼잡도: ${congestionText}</span>
-                ${cafe.parking ? '<span class="congestion-badge" style="background-color:#EFEBE9; color:#3E2723;">주차가능</span>' : ''}
+                <!-- Cafe Content -->
+                <div style="flex: 1; min-width: 0;">
+                    <div class="cafe-card-header" style="margin-bottom: 4px;">
+                        <h3 class="cafe-title" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 0; padding: 0;">${cafe.name}</h3>
+                        <div class="cafe-rating">
+                            <span class="material-symbols-outlined star-icon">star</span>
+                            <span>${cafe.rating}</span>
+                        </div>
+                    </div>
+                    <div class="cafe-meta" style="margin-bottom: var(--spacing-sm);">
+                        <span><span class="material-symbols-outlined" style="font-size: 14px; vertical-align: middle; margin-right: 4px;">map</span>${cafe.address} (${cafe.distance})</span>
+                        <span><span class="material-symbols-outlined" style="font-size: 14px; vertical-align: middle; margin-right: 4px;">schedule</span>영업시간: ${cafe.hours}</span>
+                    </div>
+                    <div class="cafe-badges">
+                        <span class="status-badge ${hasFreePlug ? "free" : "busy"}">
+                            콘센트 ${hasFreePlug ? `이용가능 (${stats.freePlugCount}/${stats.totalPlugCount})` : "만석"}
+                        </span>
+                        <span class="congestion-badge ${congestionClass}">혼잡도: ${congestionText}</span>
+                        ${cafe.parking ? '<span class="congestion-badge" style="background-color:#EFEBE9; color:#3E2723;">주차가능</span>' : ''}
+                    </div>
+                </div>
             </div>
         `;
         
@@ -527,6 +542,82 @@ function setupEventListeners() {
             renderMap();
         });
     });
+
+    // Map Zoom & Pan event listeners
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+
+    mapSvg.addEventListener("wheel", (e) => {
+        e.preventDefault();
+        
+        const zoomFactor = 1.1;
+        const mouseX = e.offsetX;
+        const mouseY = e.offsetY;
+        
+        // Calculate SVG coordinates under mouse before zoom
+        const svgX = viewX + (mouseX / mapSvg.clientWidth) * (viewWidth * zoom);
+        const svgY = viewY + (mouseY / mapSvg.clientHeight) * (viewHeight * zoom);
+        
+        if (e.deltaY < 0) {
+            // Zoom in
+            zoom /= zoomFactor;
+        } else {
+            // Zoom out
+            zoom *= zoomFactor;
+        }
+        
+        // Bound zoom level between 0.35 and 2.5
+        zoom = Math.max(0.35, Math.min(2.5, zoom));
+        
+        // Recalculate viewX and viewY to keep mouse point stationary
+        viewX = svgX - (mouseX / mapSvg.clientWidth) * (viewWidth * zoom);
+        viewY = svgY - (mouseY / mapSvg.clientHeight) * (viewHeight * zoom);
+        
+        // Boundaries
+        viewX = Math.max(-200, Math.min(1000, viewX));
+        viewY = Math.max(-200, Math.min(700, viewY));
+        
+        updateViewBox();
+    });
+
+    mapSvg.addEventListener("mousedown", (e) => {
+        // Drag map on background clicks
+        if (e.target.tagName === "svg" || e.target.tagName === "rect" || e.target.tagName === "path" || e.target.tagName === "line") {
+            isDragging = true;
+            startX = e.clientX;
+            startY = e.clientY;
+        }
+    });
+
+    mapSvg.addEventListener("mousemove", (e) => {
+        if (isDragging) {
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+            
+            // Convert screen delta to SVG delta
+            const svgDx = (dx / mapSvg.clientWidth) * (viewWidth * zoom);
+            const svgDy = (dy / mapSvg.clientHeight) * (viewHeight * zoom);
+            
+            viewX -= svgDx;
+            viewY -= svgDy;
+            
+            startX = e.clientX;
+            startY = e.clientY;
+            
+            updateViewBox();
+        }
+    });
+
+    window.addEventListener("mouseup", () => {
+        if (isDragging) {
+            isDragging = false;
+        }
+    });
+
+    function updateViewBox() {
+        mapSvg.setAttribute("viewBox", `${viewX} ${viewY} ${viewWidth * zoom} ${viewHeight * zoom}`);
+    }
 }
 
 // Adjust seats based on chosen congestion level
