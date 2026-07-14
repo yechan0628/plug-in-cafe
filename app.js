@@ -714,7 +714,10 @@ function renderFloorPlanGrid(cafe, floorNum, targetGridId) {
             cell.innerHTML = '<span class="material-symbols-outlined" style="font-size: 18px;">grid_view</span>';
         } else if (element.type === "counter") {
             cell.setAttribute("class", "floor-element counter");
-            cell.innerText = "COUNTER / 카운터";
+            cell.innerHTML = `
+                <span class="material-symbols-outlined" style="font-size: 14px; margin-bottom: 2px;">storefront</span>
+                <span style="font-size: 9px; font-weight: 800; line-height: 1; white-space: nowrap;">카운터</span>
+            `;
         } else if (element.type === "empty") {
             cell.setAttribute("class", "floor-element");
             cell.style.visibility = "hidden";
