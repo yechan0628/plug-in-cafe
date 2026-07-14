@@ -512,6 +512,16 @@ body {
     width: 100% !important;
 }
 
+.floor-element.span-4 {
+    grid-column: span 4;
+    width: 100% !important;
+}
+
+.floor-element.span-5 {
+    grid-column: span 5;
+    width: 100% !important;
+}
+
 .floor-element {
     width: 44px;
     height: 44px;

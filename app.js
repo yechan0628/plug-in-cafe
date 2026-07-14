@@ -44,18 +44,30 @@ const cafes = [
         y: 350,
         logoUrl: "https://upload.wikimedia.org/wikipedia/en/d/d3/Starbucks_Corporation_Logo_2011.svg",
         seats: [
-            { id: "S1", type: "seat", plugged: true, occupied: true, label: "센터 01" },
-            { id: "S2", type: "seat", plugged: true, occupied: true, label: "센터 02" },
-            { id: "S3", type: "seat", plugged: true, occupied: true, label: "센터 03" },
-            { id: "S4", type: "seat", plugged: true, occupied: true, label: "센터 04" },
-            { id: "C1", type: "counter" },
-            { id: "W1", type: "wall" },
-            { id: "S5", type: "seat", plugged: true, occupied: false, label: "창가 01" },
-            { id: "S6", type: "seat", plugged: true, occupied: true, label: "창가 02" },
-            { id: "S7", type: "seat", plugged: false, occupied: true, label: "2인석 01" },
-            { id: "S8", type: "seat", plugged: false, occupied: true, label: "2인석 02" },
-            { id: "S9", type: "seat", plugged: true, occupied: true, label: "스터디 01" },
-            { id: "S10", type: "seat", plugged: true, occupied: false, label: "스터디 02" },
+            // F1: Counter (span 5), Wall, 8 seats
+            { id: "S1", type: "seat", plugged: true, occupied: true, label: "1인석 01", floor: 1 },
+            { id: "S2", type: "seat", plugged: true, occupied: true, label: "1인석 02", floor: 1 },
+            { id: "S3", type: "seat", plugged: true, occupied: true, label: "1인석 03", floor: 1 },
+            { id: "S4", type: "seat", plugged: true, occupied: true, label: "1인석 04", floor: 1 },
+            { id: "C1", type: "counter", span: 5, floor: 1 }, // Spans 5 columns!
+            { id: "W1", type: "wall", floor: 1 },
+            { id: "S1_3", type: "seat", plugged: false, occupied: false, label: "1인석 05", floor: 1 },
+            { id: "S1_4", type: "seat", plugged: false, occupied: true, label: "1인석 06", floor: 1 },
+            { id: "S1_5", type: "seat", plugged: true, occupied: false, label: "소파 01", floor: 1 },
+            { id: "S1_6", type: "seat", plugged: true, occupied: true, label: "소파 02", floor: 1 },
+            // F2: 12 seats!
+            { id: "S5", type: "seat", plugged: true, occupied: false, label: "1인석 07", floor: 2 },
+            { id: "S6", type: "seat", plugged: true, occupied: true, label: "1인석 08", floor: 2 },
+            { id: "S7", type: "seat", plugged: false, occupied: true, label: "2인석 01", floor: 2 },
+            { id: "S8", type: "seat", plugged: false, occupied: true, label: "2인석 02", floor: 2 },
+            { id: "S9", type: "seat", plugged: true, occupied: true, label: "스터디 01", floor: 2 },
+            { id: "S10", type: "seat", plugged: true, occupied: false, label: "스터디 02", floor: 2 },
+            { id: "S2_3", type: "seat", plugged: true, occupied: false, label: "스터디 03", floor: 2 },
+            { id: "S2_4", type: "seat", plugged: true, occupied: true, label: "스터디 04", floor: 2 },
+            { id: "S2_5", type: "seat", plugged: false, occupied: false, label: "2인석 03", floor: 2 },
+            { id: "S2_6", type: "seat", plugged: false, occupied: true, label: "2인석 04", floor: 2 },
+            { id: "S2_7", type: "seat", plugged: true, occupied: false, label: "1인석 09", floor: 2 },
+            { id: "S2_8", type: "seat", plugged: true, occupied: true, label: "1인석 10", floor: 2 }
         ]
     },
     {
@@ -96,18 +108,18 @@ const cafes = [
         y: 420,
         logoUrl: "https://www.hollys.co.kr/websrc/images/layout/logo_210302.gif",
         seats: [
-            { id: "S1", type: "seat", plugged: true, occupied: true, label: "1층 01" },
-            { id: "S2", type: "seat", plugged: true, occupied: false, label: "1층 02" },
-            { id: "S3", type: "seat", plugged: false, occupied: false, label: "1층 03" },
-            { id: "S4", type: "seat", plugged: false, occupied: true, label: "1층 04" },
-            { id: "C1", type: "counter" },
-            { id: "W1", type: "wall" },
-            { id: "S5", type: "seat", plugged: true, occupied: false, label: "2층 01" },
-            { id: "S6", type: "seat", plugged: true, occupied: true, label: "2층 02" },
-            { id: "S7", type: "seat", plugged: true, occupied: false, label: "2층 03" },
-            { id: "S8", type: "seat", plugged: true, occupied: true, label: "2층 04" },
-            { id: "S9", type: "seat", plugged: true, occupied: false, label: "2층 05" },
-            { id: "S10", type: "seat", plugged: true, occupied: true, label: "2층 06" },
+            { id: "S1", type: "seat", plugged: true, occupied: true, label: "1층 01", floor: 1 },
+            { id: "S2", type: "seat", plugged: true, occupied: false, label: "1층 02", floor: 1 },
+            { id: "S3", type: "seat", plugged: false, occupied: false, label: "1층 03", floor: 1 },
+            { id: "S4", type: "seat", plugged: false, occupied: true, label: "1층 04", floor: 1 },
+            { id: "C1", type: "counter", floor: 1 },
+            { id: "W1", type: "wall", floor: 1 },
+            { id: "S5", type: "seat", plugged: true, occupied: false, label: "2층 01", floor: 2 },
+            { id: "S6", type: "seat", plugged: true, occupied: true, label: "2층 02", floor: 2 },
+            { id: "S7", type: "seat", plugged: true, occupied: false, label: "2층 03", floor: 2 },
+            { id: "S8", type: "seat", plugged: true, occupied: true, label: "2층 04", floor: 2 },
+            { id: "S9", type: "seat", plugged: true, occupied: false, label: "2층 05", floor: 2 },
+            { id: "S10", type: "seat", plugged: true, occupied: true, label: "2층 06", floor: 2 },
         ]
     },
     {
@@ -146,16 +158,16 @@ const cafes = [
         y: 220,
         logoUrl: "https://upload.wikimedia.org/wikipedia/commons/e/ee/A_Twosome_Place_square_logo.png",
         seats: [
-            { id: "S1", type: "seat", plugged: true, occupied: false, label: "T1" },
-            { id: "S2", type: "seat", plugged: true, occupied: true, label: "T2" },
-            { id: "S3", type: "seat", plugged: false, occupied: false, label: "T3" },
-            { id: "S4", type: "seat", plugged: false, occupied: false, label: "T4" },
-            { id: "W1", type: "wall" },
-            { id: "C1", type: "counter" },
-            { id: "S5", type: "seat", plugged: true, occupied: false, label: "창가 01" },
-            { id: "S6", type: "seat", plugged: true, occupied: true, label: "창가 02" },
-            { id: "S7", type: "seat", plugged: true, occupied: false, label: "창가 03" },
-            { id: "S8", type: "seat", plugged: true, occupied: true, label: "창가 04" }
+            { id: "S1", type: "seat", plugged: true, occupied: false, label: "T1", floor: 1 },
+            { id: "S2", type: "seat", plugged: true, occupied: true, label: "T2", floor: 1 },
+            { id: "S3", type: "seat", plugged: false, occupied: false, label: "T3", floor: 1 },
+            { id: "S4", type: "seat", plugged: false, occupied: false, label: "T4", floor: 1 },
+            { id: "W1", type: "wall", floor: 1 },
+            { id: "C1", type: "counter", floor: 1 },
+            { id: "S5", type: "seat", plugged: true, occupied: false, label: "창가 01", floor: 2 },
+            { id: "S6", type: "seat", plugged: true, occupied: true, label: "창가 02", floor: 2 },
+            { id: "S7", type: "seat", plugged: true, occupied: false, label: "창가 03", floor: 2 },
+            { id: "S8", type: "seat", plugged: true, occupied: true, label: "창가 04", floor: 2 }
         ]
     },
     {
@@ -244,14 +256,24 @@ const cafes = [
         y: 580,
         logoUrl: "https://images.unsplash.com/photo-1607958996333-41aef7caefaa?w=120&auto=format&fit=crop&q=80",
         seats: [
-            { id: "S1", type: "seat", plugged: true, occupied: false, label: "1층 01" },
-            { id: "S2", type: "seat", plugged: true, occupied: true, label: "1층 02" },
-            { id: "W1", type: "wall" },
-            { id: "C1", type: "counter" },
-            { id: "S3", type: "seat", plugged: true, occupied: false, label: "2층 01" },
-            { id: "S4", type: "seat", plugged: true, occupied: false, label: "2층 02" },
-            { id: "S5", type: "seat", plugged: false, occupied: true, label: "2층 03" },
-            { id: "S6", type: "seat", plugged: false, occupied: false, label: "2층 04" }
+            // F1: 8 seats
+            { id: "S1", type: "seat", plugged: true, occupied: false, label: "1층 01", floor: 1 },
+            { id: "S2", type: "seat", plugged: true, occupied: true, label: "1층 02", floor: 1 },
+            { id: "S7", type: "seat", plugged: true, occupied: false, label: "1층 03", floor: 1 },
+            { id: "S8", type: "seat", plugged: true, occupied: true, label: "1층 04", floor: 1 },
+            { id: "S9", type: "seat", plugged: false, occupied: false, label: "1층 소파 01", floor: 1 },
+            { id: "S10", type: "seat", plugged: false, occupied: false, label: "1층 소파 02", floor: 1 },
+            { id: "W1", type: "wall", floor: 1 },
+            { id: "C1", type: "counter", floor: 1 },
+            // F2: 8 seats
+            { id: "S3", type: "seat", plugged: true, occupied: false, label: "2층 소파 01", floor: 2 },
+            { id: "S4", type: "seat", plugged: true, occupied: false, label: "2층 소파 02", floor: 2 },
+            { id: "S5", type: "seat", plugged: false, occupied: true, label: "2층 스터디 01", floor: 2 },
+            { id: "S6", type: "seat", plugged: false, occupied: false, label: "2층 스터디 02", floor: 2 },
+            { id: "S11", type: "seat", plugged: true, occupied: true, label: "2층 2인석 01", floor: 2 },
+            { id: "S12", type: "seat", plugged: true, occupied: true, label: "2층 2인석 02", floor: 2 },
+            { id: "S13", type: "seat", plugged: false, occupied: false, label: "2층 2인석 03", floor: 2 },
+            { id: "S14", type: "seat", plugged: false, occupied: false, label: "2층 2인석 04", floor: 2 }
         ]
     }
 ];
@@ -293,39 +315,19 @@ function init() {
 function augmentCafeDatabase() {
     cafes.forEach(cafe => {
         cafe.seats.forEach((item, index) => {
-            // 1. Assign floor default (1)
-            item.floor = 1;
+            // 1. Assign floor default if not defined in database
+            item.floor = item.floor || 1;
             
-            // 2. Adjust floor for 2-floor cafes based on labels or splits
-            if (cafe.id === 2) { // Starbucks
-                // Split 12 items: 1-6 are F1, 7-12 are F2
-                if (index >= 6) {
-                    item.floor = 2;
-                    if (item.label) item.label = item.label.replace("창가", "2층 창가").replace("2인석", "2층 2인석").replace("스터디", "2층 스터디");
-                } else {
-                    if (item.label) item.label = "1층 " + item.label;
-                }
-            } else if (cafe.id === 4) { // Hollys
-                if (item.label && item.label.includes("2층")) {
-                    item.floor = 2;
-                }
-            } else if (cafe.id === 6) { // Twosome
-                // Split 10 items: 1-5 F1, 6-10 F2
-                if (index >= 5) {
-                    item.floor = 2;
-                    if (item.label) item.label = "2층 " + item.label;
-                } else {
-                    if (item.label) item.label = "1층 " + item.label;
-                }
-            } else if (cafe.id === 10) { // Tom N Toms
-                if (item.label && item.label.includes("2층")) {
-                    item.floor = 2;
-                }
-            }
-            
-            // Rename "창가", "바", "T1", etc. to "1인석" or "2인석"
+            // 2. Format labels with floor prefixes if not already present
             if (item.label) {
-                item.label = item.label
+                let prefix = "";
+                if (item.floor === 2 && !item.label.includes("2층")) {
+                    prefix = "2층 ";
+                } else if (item.floor === 1 && !item.label.includes("1층")) {
+                    prefix = "1층 ";
+                }
+                
+                item.label = prefix + item.label
                     .replace("창가", "1인석")
                     .replace("바", "1인석")
                     .replace("T1", "1인석 01")
@@ -339,13 +341,13 @@ function augmentCafeDatabase() {
                     .replace("C-", "2인석 ");
             }
             
-            // 3. Assign shapes/types dynamically based on labels and indexes to create unique structures
+            // 3. Assign shapes/types dynamically based on labels
             if (item.type === "seat") {
                 item.shape = "square"; // default
                 
                 if (item.label) {
                     const lbl = item.label.toLowerCase();
-                    if (lbl.includes("소파") || lbl.includes("라운지") || lbl.includes("2층 01") || lbl.includes("2층 02") || lbl.includes("소파 01") || lbl.includes("소파 02") || lbl.includes("소파 03") || lbl.includes("소파 04")) {
+                    if (lbl.includes("소파") || lbl.includes("라운지") || lbl.includes("소파 01") || lbl.includes("소파 02") || lbl.includes("소파 03") || lbl.includes("소파 04")) {
                         item.shape = "sofa";
                     } else if (lbl.includes("스터디") || lbl.includes("communal")) {
                         item.shape = "communal";
@@ -367,7 +369,7 @@ function augmentCafeDatabase() {
                     }
                 }
             } else if (item.type === "counter") {
-                item.span = 3;
+                item.span = item.span || 3;
             } else {
                 item.span = 1;
             }
