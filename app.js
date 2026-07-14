@@ -181,7 +181,7 @@ const cafes = [
         congestion: "low",
         x: 880,
         y: 130,
-        logoUrl: "https://upload.wikimedia.org/wikipedia/commons/b/b8/Ediya_Coffee_logo.svg",
+        logoUrl: "./ediya_logo.png",
         seats: [
             { id: "S1", type: "seat", plugged: true, occupied: false, label: "창가 01" },
             { id: "S2", type: "seat", plugged: true, occupied: false, label: "창가 02" },
@@ -227,7 +227,7 @@ const cafes = [
         congestion: "mid",
         x: 280,
         y: 560,
-        logoUrl: "https://upload.wikimedia.org/wikipedia/commons/e/e0/TCB%26TL_wordmark.svg",
+        logoUrl: "./coffeebean_logo.png",
         seats: [
             { id: "S1", type: "seat", plugged: true, occupied: false, label: "라운지 01" },
             { id: "S2", type: "seat", plugged: true, occupied: false, label: "라운지 02" },
@@ -254,7 +254,7 @@ const cafes = [
         congestion: "mid",
         x: 600,
         y: 580,
-        logoUrl: "https://upload.wikimedia.org/wikipedia/ko/a/a2/%ED%83%90%EC%95%A4%ED%83%90%EC%8A%A4_%EB%A1%9C%EA%B3%A0.png",
+        logoUrl: "./tomntoms_logo.png",
         seats: [
             // F1: 8 seats
             { id: "S1", type: "seat", plugged: true, occupied: false, label: "1층 01", floor: 1 },
