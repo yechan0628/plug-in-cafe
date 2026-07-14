@@ -310,18 +310,17 @@ body {
 /* Map Markers */
 .map-marker {
     cursor: pointer;
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.map-marker:hover, .map-marker.active {
-    transform: scale(1.2);
 }
 
 .map-marker .pin-body {
     fill: var(--color-primary);
     stroke: #FFF;
     stroke-width: 2px;
-    transition: fill 0.3s;
+    transition: fill 0.2s, opacity 0.2s, filter 0.2s;
+}
+
+.map-marker:hover .pin-body {
+    fill: var(--color-primary-light);
 }
 
 .map-marker.active .pin-body {
@@ -329,9 +328,17 @@ body {
     filter: drop-shadow(0 0 8px rgba(76, 175, 80, 0.6));
 }
 
+.map-marker.active:hover .pin-body {
+    filter: brightness(1.1) drop-shadow(0 0 12px rgba(76, 175, 80, 0.8));
+}
+
 .map-marker.active.busy .pin-body {
     fill: var(--color-status-busy);
     filter: drop-shadow(0 0 8px rgba(229, 57, 53, 0.6));
+}
+
+.map-marker.active.busy:hover .pin-body {
+    filter: brightness(1.1) drop-shadow(0 0 12px rgba(229, 57, 53, 0.8));
 }
 
 .map-marker .pin-glow {
