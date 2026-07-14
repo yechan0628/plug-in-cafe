@@ -155,9 +155,36 @@ const mapSvg = document.getElementById("map-svg");
 
 // Initialize application
 function init() {
+    createSvgPatterns();
     renderMap();
     renderCafeList();
     setupEventListeners();
+}
+
+// Create SVG patterns dynamically for cafe logos
+function createSvgPatterns() {
+    const defs = mapSvg.querySelector("defs");
+    if (!defs) return;
+    
+    cafes.forEach(cafe => {
+        const pattern = document.createElementNS("http://www.w3.org/2000/svg", "pattern");
+        pattern.setAttribute("id", `logo-pattern-${cafe.id}`);
+        pattern.setAttribute("patternContentUnits", "objectBoundingBox");
+        pattern.setAttribute("width", "1");
+        pattern.setAttribute("height", "1");
+        
+        const img = document.createElementNS("http://www.w3.org/2000/svg", "image");
+        img.setAttribute("href", cafe.logoUrl);
+        img.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", cafe.logoUrl);
+        img.setAttribute("x", "0");
+        img.setAttribute("y", "0");
+        img.setAttribute("width", "1");
+        img.setAttribute("height", "1");
+        img.setAttribute("preserveAspectRatio", "xMidYMid slice");
+        
+        pattern.appendChild(img);
+        defs.appendChild(pattern);
+    });
 }
 
 // Compute seat statistics
@@ -208,16 +235,12 @@ function renderMap() {
         pinBody.setAttribute("class", "pin-body");
         pinBody.setAttribute("d", "M0 -35 C-12 -35 -15 -25 -15 -15 C-15 -5 0 0 0 0 C0 0 15 -5 15 -15 C15 -25 12 -35 0 -35 Z");
         
-        const image = document.createElementNS("http://www.w3.org/2000/svg", "image");
-        image.setAttribute("href", cafe.logoUrl);
-        image.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", cafe.logoUrl);
-        image.setAttribute("x", "-11");
-        image.setAttribute("y", "-31");
-        image.setAttribute("width", "22");
-        image.setAttribute("height", "22");
-        image.setAttribute("clip-path", "url(#pin-circle-clip)");
-        image.setAttribute("preserveAspectRatio", "xMidYMid slice");
-        marker.appendChild(image);
+        // Logo Circle filled with Pattern
+        const logoCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        logoCircle.setAttribute("cx", "0");
+        logoCircle.setAttribute("cy", "-20");
+        logoCircle.setAttribute("r", "10.5");
+        logoCircle.setAttribute("fill", `url(#logo-pattern-${cafe.id})`);
         
         // Text label
         const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
@@ -230,7 +253,7 @@ function renderMap() {
         
         marker.appendChild(glow);
         marker.appendChild(pinBody);
-        marker.appendChild(icon);
+        marker.appendChild(logoCircle);
         marker.appendChild(text);
         
         // Event Listener
