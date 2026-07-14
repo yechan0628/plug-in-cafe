@@ -323,19 +323,33 @@ function augmentCafeDatabase() {
                 }
             }
             
+            // Rename "창가", "바", "T1", etc. to "1인석" or "2인석"
+            if (item.label) {
+                item.label = item.label
+                    .replace("창가", "1인석")
+                    .replace("바", "1인석")
+                    .replace("T1", "1인석 01")
+                    .replace("T2", "1인석 02")
+                    .replace("T3", "1인석 03")
+                    .replace("T4", "1인석 04")
+                    .replace("센터", "1인석")
+                    .replace("작업대", "2인석")
+                    .replace("A-", "1인석 ")
+                    .replace("B-", "1인석 ")
+                    .replace("C-", "2인석 ");
+            }
+            
             // 3. Assign shapes/types dynamically based on labels and indexes to create unique structures
             if (item.type === "seat") {
                 item.shape = "square"; // default
                 
                 if (item.label) {
                     const lbl = item.label.toLowerCase();
-                    if (lbl.includes("창가") || lbl.includes("바") || lbl.includes("t1") || lbl.includes("t2") || lbl.includes("t3") || lbl.includes("t4")) {
-                        item.shape = "bar";
-                    } else if (lbl.includes("소파") || lbl.includes("라운지") || lbl.includes("2층 01") || lbl.includes("2층 02") || lbl.includes("소파 01") || lbl.includes("소파 02") || lbl.includes("소파 03") || lbl.includes("소파 04")) {
+                    if (lbl.includes("소파") || lbl.includes("라운지") || lbl.includes("2층 01") || lbl.includes("2층 02") || lbl.includes("소파 01") || lbl.includes("소파 02") || lbl.includes("소파 03") || lbl.includes("소파 04")) {
                         item.shape = "sofa";
-                    } else if (lbl.includes("스터디") || lbl.includes("작업대") || lbl.includes("테라스") || lbl.includes("communal")) {
+                    } else if (lbl.includes("스터디") || lbl.includes("communal")) {
                         item.shape = "communal";
-                    } else if (lbl.includes("테이블") || lbl.includes("센터") || lbl.includes("2인석") || lbl.includes("01") || lbl.includes("02") || lbl.includes("03")) {
+                    } else if (lbl.includes("테이블") || lbl.includes("1인석") || lbl.includes("2인석") || lbl.includes("테라스")) {
                         item.shape = "round";
                     }
                 }
@@ -722,7 +736,6 @@ function renderFloorPlanGrid(cafe, floorNum, targetGridId) {
             
             let shapeIcon = "chair";
             if (element.shape === "sofa") shapeIcon = "chair_alt";
-            else if (element.shape === "bar") shapeIcon = "stool";
             else if (element.shape === "communal") shapeIcon = "table_restaurant";
             
             // Clean label of floor prefixes
