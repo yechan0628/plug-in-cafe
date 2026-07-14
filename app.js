@@ -435,7 +435,10 @@ function getCafeStats(cafe) {
     const freePlugCount = freePlugSeats.reduce((sum, s) => sum + (s.span || 1), 0);
     
     const allSeats = cafe.seats.filter(s => s.type === "seat");
+    const freeSeats = allSeats.filter(s => !s.occupied);
     const totalSeats = allSeats.reduce((sum, s) => sum + (s.span || 1), 0);
+    const freeSeatsCount = freeSeats.reduce((sum, s) => sum + (s.span || 1), 0);
+    
     const plugRatio = totalSeats > 0 ? (totalPlugCount / totalSeats) : 0;
     const isManyPlugs = plugRatio >= 0.5 || totalPlugCount >= 6;
     
@@ -443,7 +446,8 @@ function getCafeStats(cafe) {
         freePlugCount,
         totalPlugCount,
         isManyPlugs,
-        totalSeats
+        totalSeats,
+        freeSeatsCount
     };
 }
 
@@ -672,9 +676,10 @@ function renderBottomSheet(cafe) {
             </div>
             
             <div style="background-color: var(--color-bg-base); padding: var(--spacing-md); border-radius: var(--radius-sm); border: 1px solid var(--color-border); margin-top: var(--spacing-sm);">
-                <h4 style="font-size: 13px; font-weight: 800; margin-bottom: 4px;">실시간 콘센트 요약</h4>
-                <p class="plug-stats-summary" style="font-size: 15px; font-weight: 700; color: var(--color-status-free);">총 ${stats.totalPlugCount}개의 콘센트 좌석 중 현재 ${stats.freePlugCount}석 비어있음</p>
-                <span style="font-size: 11px; color: var(--color-secondary); display: block; margin-top: 4px;">* 좌석 배치도의 좌석을 직접 터치해 가상 점유 상태를 토글할 수 있습니다.</span>
+                <h4 style="font-size: 13px; font-weight: 800; margin-bottom: 6px;">실시간 콘센트 및 좌석 요약</h4>
+                <p class="plug-stats-summary" style="font-size: 14px; font-weight: 700; color: var(--color-status-free);">🔌 콘센트 좌석: 총 ${stats.totalPlugCount}석 중 현재 ${stats.freePlugCount}석 비어있음</p>
+                <p class="total-stats-summary" style="font-size: 13px; font-weight: 700; color: var(--color-secondary); margin-top: 4px;">🪑 전체 일반 좌석: 총 ${stats.totalSeats}석 중 현재 ${stats.freeSeatsCount}석 비어있음</p>
+                <span style="font-size: 11px; color: var(--color-secondary); display: block; margin-top: 6px;">* 좌석 배치도의 좌석을 직접 터치해 가상 점유 상태를 토글할 수 있습니다.</span>
             </div>
         </div>
         
@@ -765,9 +770,21 @@ function renderFloorPlanGrid(cafe, floorNum, targetGridId) {
                 `;
             }
             
+            let plugBadgeHtml = "";
+            if (element.plugged) {
+                const plugsCount = element.span || 1;
+                plugBadgeHtml = `
+                    <div style="position: absolute; bottom: 2px; right: 2px; display: flex; align-items: center; background: var(--color-primary); color: #FFF; border-radius: 4px; padding: 1px 2px; font-size: 8px; font-weight: 800; line-height: 1; pointer-events: none; border: 0.5px solid rgba(255,255,255,0.4);">
+                        <span class="material-symbols-outlined" style="font-size: 8.5px; margin-right: 0.5px; font-weight: 800; display: inline-block; vertical-align: middle;">power</span>
+                        ${plugsCount > 1 ? `<span style="font-size: 7.5px; vertical-align: middle;">${plugsCount}</span>` : ""}
+                    </div>
+                `;
+            }
+            
             cell.innerHTML = `
                 <span class="material-symbols-outlined" style="font-size: 13px; opacity: 0.85; margin-bottom: 1px;">${shapeIcon}</span>
                 ${labelContentHtml}
+                ${plugBadgeHtml}
             `;
             
             // Seat Click Interactivity (Toggle Busy/Free)
@@ -780,11 +797,15 @@ function renderFloorPlanGrid(cafe, floorNum, targetGridId) {
                     renderFloorPlanGrid(cafe, 2, "floor-plan-grid-f2");
                 }
                 
-                // Update only the statistics paragraph dynamically
+                // Update statistics paragraphs dynamically
                 const stats = getCafeStats(cafe);
                 const statsSummary = document.querySelector(".plug-stats-summary");
                 if (statsSummary) {
-                    statsSummary.innerText = `총 ${stats.totalPlugCount}개의 콘센트 좌석 중 현재 ${stats.freePlugCount}석 비어있음`;
+                    statsSummary.innerText = `🔌 콘센트 좌석: 총 ${stats.totalPlugCount}석 중 현재 ${stats.freePlugCount}석 비어있음`;
+                }
+                const totalSummary = document.querySelector(".total-stats-summary");
+                if (totalSummary) {
+                    totalSummary.innerText = `🪑 전체 일반 좌석: 총 ${stats.totalSeats}석 중 현재 ${stats.freeSeatsCount}석 비어있음`;
                 }
                 
                 renderCafeList();
