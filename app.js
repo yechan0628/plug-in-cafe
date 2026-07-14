@@ -671,7 +671,7 @@ function renderBottomSheet(cafe) {
             
             <div style="background-color: var(--color-bg-base); padding: var(--spacing-md); border-radius: var(--radius-sm); border: 1px solid var(--color-border); margin-top: var(--spacing-sm);">
                 <h4 style="font-size: 13px; font-weight: 800; margin-bottom: 4px;">실시간 콘센트 요약</h4>
-                <p style="font-size: 15px; font-weight: 700; color: var(--color-status-free);">총 ${stats.totalPlugCount}개의 콘센트 좌석 중 현재 ${stats.freePlugCount}석 비어있음</p>
+                <p class="plug-stats-summary" style="font-size: 15px; font-weight: 700; color: var(--color-status-free);">총 ${stats.totalPlugCount}개의 콘센트 좌석 중 현재 ${stats.freePlugCount}석 비어있음</p>
                 <span style="font-size: 11px; color: var(--color-secondary); display: block; margin-top: 4px;">* 좌석 배치도의 좌석을 직접 터치해 가상 점유 상태를 토글할 수 있습니다.</span>
             </div>
         </div>
@@ -780,7 +780,7 @@ function renderFloorPlanGrid(cafe, floorNum, targetGridId) {
                 
                 // Update only the statistics paragraph dynamically
                 const stats = getCafeStats(cafe);
-                const statsSummary = document.querySelector(".sheet-left p");
+                const statsSummary = document.querySelector(".plug-stats-summary");
                 if (statsSummary) {
                     statsSummary.innerText = `총 ${stats.totalPlugCount}개의 콘센트 좌석 중 현재 ${stats.freePlugCount}석 비어있음`;
                 }
