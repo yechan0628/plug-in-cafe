@@ -44,8 +44,12 @@
 
         <!-- Right Content Area: Map & Sheet -->
         <main class="map-container">
-            <!-- Custom Vector SVG Map representing a cozy street block -->
             <svg id="map-svg" viewBox="0 0 1000 700" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <clipPath id="pin-circle-clip">
+                        <circle cx="0" cy="-20" r="10.5" />
+                    </clipPath>
+                </defs>
                 <!-- Background Block -->
                 <rect width="1000" height="700" fill="#EFEBE9" />
                 
