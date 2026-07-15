@@ -42,3 +42,21 @@ model Seat {
   @@unique([cafeId, seatKey, floor], name: "unique_cafe_seat_floor")
   @@map("seats")
 }
+
+model User {
+  id        Int      @id @default(1)
+  points    Int      @default(1000)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@map("users")
+}
+
+model Coupon {
+  id        Int      @id @default(autoincrement())
+  code      String   @unique @db.VarChar(50)
+  discount  String   @db.VarChar(100)
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@map("coupons")
+}

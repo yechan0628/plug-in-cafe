@@ -25,6 +25,27 @@ const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 console.log("Prisma Client with PgAdapter initialized successfully.");
 
+// Self-healing database initializer for User and Coupon
+async function getOrCreateDefaultUser() {
+    let user = await prisma.user.findUnique({
+        where: { id: 1 }
+    });
+    if (!user) {
+        user = await prisma.user.create({
+            data: { id: 1, points: 1000 }
+        });
+        // Create a default welcome coupon
+        await prisma.coupon.create({
+            data: {
+                code: "WELCOME2026",
+                discount: "신촌 플러그인 가입 축하 아메리카노 1잔 무료 쿠폰 ☕",
+                used: false
+            }
+        });
+    }
+    return user;
+}
+
 // Map database entities to camelCase frontend entities
 function mapPrismaToFrontend(cafesData) {
     return cafesData.map(cafe => ({
@@ -73,7 +94,7 @@ app.get('/api/cafes', async (req, res) => {
     }
 });
 
-// 2. Toggle seat occupancy status
+// 2. Toggle seat occupancy status (Reservations & Point accumulation)
 app.post('/api/seats/toggle', async (req, res) => {
     try {
         const { cafeId, seatKey, floor, occupied } = req.body;
@@ -90,15 +111,75 @@ app.post('/api/seats/toggle', async (req, res) => {
                 occupied: occupied
             }
         });
+
+        let earnedPoints = 0;
+        let currentPoints = 1000;
         
-        res.json({ success: true, updated: updatedSeat });
+        // Give 100 points reward when reserving/occupying a seat
+        if (occupied) {
+            const user = await getOrCreateDefaultUser();
+            const updatedUser = await prisma.user.update({
+                where: { id: 1 },
+                data: { points: user.points + 100 }
+            });
+            currentPoints = updatedUser.points;
+            earnedPoints = 100;
+        } else {
+            const user = await getOrCreateDefaultUser();
+            currentPoints = user.points;
+        }
+        
+        res.json({ 
+            success: true, 
+            updated: updatedSeat,
+            earnedPoints: earnedPoints,
+            currentPoints: currentPoints
+        });
     } catch (err) {
         console.error("Error toggling seat:", err);
         res.status(500).json({ error: err.message });
     }
 });
 
-// 3. AI Cafe Recommendation Assistant Chatbot API (Gemini LLM)
+// 3. Get current User profile and coupon list
+app.get('/api/user', async (req, res) => {
+    try {
+        const user = await getOrCreateDefaultUser();
+        const coupons = await prisma.coupon.findMany({
+            orderBy: { createdAt: 'desc' }
+        });
+        res.json({
+            points: user.points,
+            coupons: coupons
+        });
+    } catch (err) {
+        console.error("Error fetching user data:", err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// 4. Claim coupon manually or programmatic
+app.post('/api/user/claim-coupon', async (req, res) => {
+    try {
+        const { discount } = req.body;
+        const code = "CPN-" + Math.random().toString(36).substr(2, 9).toUpperCase();
+        
+        const newCoupon = await prisma.coupon.create({
+            data: {
+                code: code,
+                discount: discount || "신촌 카페 연동 1,000원 할인권 🎫",
+                used: false
+            }
+        });
+        
+        res.json({ success: true, coupon: newCoupon });
+    } catch (err) {
+        console.error("Error claiming coupon:", err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// 5. AI Cafe Recommendation Assistant Chatbot API (Gemini LLM with Rewards Integration)
 app.post('/api/ai/chat', async (req, res) => {
     try {
         const { message } = req.body;
@@ -107,7 +188,7 @@ app.post('/api/ai/chat', async (req, res) => {
             return res.status(400).json({ error: "Message is required." });
         }
         
-        // Fetch fresh real-time database state
+        // Fetch fresh database states
         const cafesData = await prisma.cafe.findMany({
             include: {
                 seats: {
@@ -116,6 +197,10 @@ app.post('/api/ai/chat', async (req, res) => {
                     }
                 }
             }
+        });
+        const user = await getOrCreateDefaultUser();
+        const coupons = await prisma.coupon.findMany({
+            orderBy: { createdAt: 'desc' }
         });
         
         const currentCafes = mapPrismaToFrontend(cafesData);
@@ -127,6 +212,8 @@ app.post('/api/ai/chat', async (req, res) => {
             const totalPlugs = plugSeats.reduce((sum, s) => sum + (s.span || 1), 0);
             return `- ${cafe.name} (${cafe.distance}): 총 ${totalPlugs}석의 콘센트 좌석 중 현재 ${freePlugs}석 비어있음, 주차: ${cafe.parking ? '가능' : '불가능'}, 영업시간: ${cafe.hours}, 혼잡도: ${cafe.congestion === 'low' ? '한적함' : cafe.congestion === 'mid' ? '보통' : '혼잡함'}, 주소: ${cafe.address}`;
         }).join('\n');
+
+        const couponsList = coupons.map(c => `- ${c.discount} (코드: ${c.code}, 사용여부: ${c.used ? '사용함' : '미사용'})`).join('\n') || "없음";
         
         const systemPrompt = `
 당신은 신촌역 인근 콘센트 카페 찾기 서비스인 "Plug-In Cafe(플러그인 카페)"의 친절하고 전문적인 AI 추천 비서("Plug-In AI 비서")입니다.
@@ -135,57 +222,92 @@ app.post('/api/ai/chat', async (req, res) => {
 [실시간 카페 현황]
 ${cafeStatsContext}
 
+현재 로그인한 사용자 정보 (마이페이지 연동):
+- 보유 포인트: ${user.points} P (좌석을 터치하여 이용/예약할 때마다 +100 P 적립!)
+- 보유 쿠폰 목록:
+${couponsList}
+
 [답변 원칙]
-1. 사용자의 질문에 맞춰 오직 위의 [실시간 카페 현황] 데이터에 기반하여 정직하고 친절하게 답변하세요.
-2. 예시:
-   - "주차되고 콘센트 있는 곳 추천해줘" -> 주차가 가능하고 콘센트 잔여석이 있는 매장 추천.
-   - "가장 한적한 스타벅스가 어디야?" -> 스타벅스 매장의 혼잡도(congestion) 정보를 바탕으로 추천.
-3. 답변은 불필요하게 길지 않고, 친절한 말투(존댓말)로 2~3줄 내외 혹은 깔끔한 글머리 기호(Bullet points) 형식으로 간결하게 작성하세요.
-4. 만약 데이터에 기반한 확실한 추천이 불가능하거나 데이터 범위를 넘어서는 질문이라면, 데이터의 한계를 정중히 밝히고 플러그인 카페 지도상의 실시간 정보를 활용할 수 있도록 안내하세요.
+1. 사용자의 질문에 맞춰 오직 위의 [실시간 카페 현황] 및 [사용자 정보] 데이터에 기반하여 정직하고 친절하게 답변하세요.
+2. 사용자가 카페 추천 외에 자신의 포인트나 쿠폰, 예약(좌석 클릭/점유)에 관해 질문하면 친절하게 대답해 주십시오. (예: 좌석 배치도에서 원하는 좌석을 클릭하여 예약을 변경할 때마다 100포인트가 적립됩니다!)
+3. 사용자가 쿠폰을 새로 발급해 달라고 요청하는 경우(예: "쿠폰 줘", "쿠폰 발급해줘"), 답변 말미에 대괄호를 사용하여 정확히 \`[ISSUE_COUPON: <쿠폰 이름>]\` 형태로 기재하세요. 쿠폰 이름은 실속 있는 카페 혜택으로 자유롭게 지어주십시오.
+   예: "요청하신 쿠폰을 발급해 드렸습니다! [ISSUE_COUPON: 신촌 카페 연동 아메리카노 무료 쿠폰 ☕]"
+4. 답변은 불필요하게 길지 않고, 친절한 말투(존댓말)로 2~3줄 내외 혹은 깔끔한 글머리 기호(Bullet points) 형식으로 간결하게 작성하세요.
 `;
 
         const geminiApiKey = process.env.GEMINI_API_KEY;
+        let replyText = "";
+        let couponIssued = false;
+        let newCouponData = null;
+        let currentPoints = user.points;
+
         if (!geminiApiKey || geminiApiKey === 'YOUR_GEMINI_API_KEY_HERE') {
             // Simulated fallback mode
             console.log("Simulating Gemini AI Response (API Key is not configured)");
-            
-            // Build simple rule-based simulated response based on keywords
-            let reply = "";
             const query = message.toLowerCase();
             
-            if (query.includes("주차")) {
+            if (query.includes("쿠폰") && (query.includes("줘") || query.includes("발급") || query.includes("추가"))) {
+                replyText = `요청하신 쿠폰을 발급해 드렸습니다! 마이페이지 영역에서 즉시 사용 가능합니다. [ISSUE_COUPON: 챗봇 발급 전용 라떼 1,000원 할인권 🎫]`;
+            } else if (query.includes("포인트") || query.includes("예약") || query.includes("적립")) {
+                replyText = `🪙 현재 고객님의 포인트는 **${user.points} P** 이며, 예약 쿠폰 혜택이 적용 중입니다. 좌석 배치도의 좌석을 터치(예약)할 때마다 100포인트가 즉시 적립됩니다!`;
+            } else if (query.includes("주차")) {
                 const parkingCafes = currentCafes.filter(c => c.parking);
-                reply = `🚗 현재 주차가 가능한 매장은 **${parkingCafes.map(c => c.name).join(', ')}** 입니다. 특히 '${parkingCafes[0].name}' 매장은 현재 콘센트석 여유도 충분하여 편하게 이용하실 수 있습니다!`;
-            } else if (query.includes("스타벅스")) {
-                const starbucks = currentCafes.filter(c => c.name.includes("스타벅스"));
-                reply = `💚 스타벅스 매장은 현재 신촌역 부근에 여러 지점이 있습니다. 가장 가까운 지점은 **${starbucks[0].name}**(${starbucks[0].distance})이며, 콘센트 이용은 실시간 좌석 배치도를 통해 실시간 터치로 확인해 보세요.`;
+                replyText = `🚗 현재 주차가 가능한 매장은 **${parkingCafes.map(c => c.name).join(', ')}** 입니다. 특히 '${parkingCafes[0].name}' 매장은 현재 콘센트석 여유도 충분하여 편하게 이용하실 수 있습니다!`;
             } else if (query.includes("한적") || query.includes("조용")) {
                 const quietCafes = currentCafes.filter(c => c.congestion === 'low');
-                reply = `🍃 현재 매장이 한적하고 조용한 편인 카페는 **${quietCafes.map(c => c.name).join(', ')}** 입니다. 쾌적한 작업 공간이 필요하시다면 해당 매장들을 적극 추천드립니다.`;
+                replyText = `🍃 현재 매장이 한적하고 조용한 편인 카페는 **${quietCafes.map(c => c.name).join(', ')}** 입니다. 쾌적한 작업 공간이 필요하시다면 해당 매장을 추천드립니다.`;
             } else {
-                // Default fallback recommendation
                 const sortedByPlugs = [...currentCafes].sort((a,b) => {
                     const aFree = a.seats.filter(s => s.type === 'seat' && s.plugged && !s.occupied).length;
                     const bFree = b.seats.filter(s => s.type === 'seat' && s.plugged && !s.occupied).length;
                     return bFree - aFree;
                 });
-                reply = `🔌 안녕하세요! 현재 신촌역 인근에서 콘센트 여유 자리가 가장 많은 매장은 **${sortedByPlugs[0].name}** (잔여 콘센트 자리가 넉넉함) 입니다. 작업하기 좋은 최적의 환경을 원하신다면 해당 매장의 도면을 클릭해 상세 좌석을 확인해보세요!`;
+                replyText = `🔌 안녕하세요! 현재 신촌역 인근에서 콘센트 여유 자리가 가장 많은 매장은 **${sortedByPlugs[0].name}** 입니다. 작업하기 좋은 최적의 환경을 원하신다면 해당 매장의 도면을 클릭해 상세 좌석을 확인해보세요!`;
             }
+        } else {
+            // Call Real Gemini API using GoogleGenAI
+            const ai = new GoogleGenAI({ apiKey: geminiApiKey });
+            const model = ai.getGenerativeModel({ model: "gemini-2.5-flash" });
             
-            return res.json({ reply: `[⚠️ 시뮬레이션 모드 - .env 파일에 API 키 등록 시 실제 AI 추천이 활성화됩니다]\n\n${reply}` });
+            const result = await model.generateContent([
+                { text: systemPrompt },
+                { text: `사용자 질문: ${message}` }
+            ]);
+            replyText = result.response.text();
+        }
+
+        // Post-process the AI response to handle coupon issuance
+        const couponMatch = replyText.match(/\[ISSUE_COUPON:\s*(.*?)\]/);
+        if (couponMatch) {
+            const discountName = couponMatch[1].trim();
+            // Remove the coupon tag from the reply text
+            replyText = replyText.replace(couponMatch[0], "").trim();
+            
+            // Create coupon in database
+            const code = "CPN-" + Math.random().toString(36).substr(2, 9).toUpperCase();
+            newCouponData = await prisma.coupon.create({
+                data: {
+                    code: code,
+                    discount: discountName || "챗봇 발급 혜택 쿠폰 🎫",
+                    used: false
+                }
+            });
+            couponIssued = true;
+            
+            // Bonus points for chatbot interactions
+            const updatedUser = await prisma.user.update({
+                where: { id: 1 },
+                data: { points: user.points + 100 }
+            });
+            currentPoints = updatedUser.points;
         }
         
-        // Call Real Gemini API using GoogleGenAI
-        const ai = new GoogleGenAI({ apiKey: geminiApiKey });
-        const model = ai.getGenerativeModel({ model: "gemini-2.5-flash" });
-        
-        const result = await model.generateContent([
-            { text: systemPrompt },
-            { text: `사용자 질문: ${message}` }
-        ]);
-        
-        const replyText = result.response.text();
-        res.json({ reply: replyText });
+        res.json({ 
+            reply: replyText,
+            couponIssued: couponIssued,
+            coupon: newCouponData,
+            points: currentPoints
+        });
     } catch (err) {
         console.error("Error in AI Chat API:", err);
         res.status(500).json({ error: "AI 추천 서비스 처리 중 오류가 발생했습니다." });

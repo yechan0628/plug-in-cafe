@@ -36,6 +36,32 @@
                 </div>
             </div>
             
+            <!-- My Rewards (Points & Coupons) Panel -->
+            <div class="user-rewards-panel">
+                <div class="rewards-title">
+                    <span class="material-symbols-outlined">stars</span>
+                    <span>마이 혜택 (My Rewards)</span>
+                </div>
+                <div class="rewards-content">
+                    <div class="reward-item" id="reward-points-container">
+                        <span class="reward-icon">🪙</span>
+                        <span class="reward-label">보유 포인트</span>
+                        <span class="reward-value" id="user-points">1,000 P</span>
+                    </div>
+                    <div class="reward-item clickable" id="reward-coupons-container" onclick="toggleCouponsDropdown()">
+                        <span class="reward-icon">🎟️</span>
+                        <span class="reward-label">보유 쿠폰</span>
+                        <span class="reward-value" id="user-coupons-count">1장</span>
+                    </div>
+                </div>
+                <!-- Coupons Dropdown List -->
+                <div class="coupons-dropdown" id="coupons-dropdown">
+                    <div class="coupons-list" id="coupons-list">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+            
             <!-- Cafe Cards List -->
             <div class="cafe-list" id="cafe-list">
                 <!-- Javascript will render cards here -->

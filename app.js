@@ -29,8 +29,67 @@ const mapSvg = document.getElementById("map-svg");
 // Initialize application
 async function init() {
     await loadCafes();
+    await loadUserRewards();
     createSvgPatterns();
     setupEventListeners();
+}
+
+// Load points and coupons from backend
+async function loadUserRewards() {
+    try {
+        const res = await fetch('/api/user');
+        const data = await res.json();
+        
+        // Update points
+        const pointsEl = document.getElementById("user-points");
+        if (pointsEl) {
+            const oldText = pointsEl.innerText;
+            const newText = `${data.points.toLocaleString()} P`;
+            pointsEl.innerText = newText;
+            
+            // Add pulse effect if points actually increased
+            if (oldText && oldText !== newText) {
+                pointsEl.classList.add("points-updated");
+                setTimeout(() => pointsEl.classList.remove("points-updated"), 600);
+            }
+        }
+        
+        // Update coupons count
+        const couponsCountEl = document.getElementById("user-coupons-count");
+        if (couponsCountEl) {
+            couponsCountEl.innerText = `${data.coupons.length}장`;
+        }
+        
+        // Render coupons list
+        const listEl = document.getElementById("coupons-list");
+        if (listEl) {
+            if (data.coupons.length === 0) {
+                listEl.innerHTML = `<div style="font-size: 10px; color: var(--color-secondary); text-align: center; padding: 10px 0;">보유 중인 쿠폰이 없습니다. 🎟️</div>`;
+            } else {
+                listEl.innerHTML = data.coupons.map(coupon => `
+                    <div class="coupon-card">
+                        <div class="coupon-details">
+                            <span class="coupon-name">${coupon.discount}</span>
+                            <span class="coupon-code">코드: ${coupon.code}</span>
+                        </div>
+                        <span class="coupon-status ${coupon.used ? 'used' : 'available'}">
+                            ${coupon.used ? '사용완료' : '사용가능'}
+                        </span>
+                    </div>
+                `).join('');
+            }
+        }
+    } catch (err) {
+        console.error("Failed to load user rewards:", err);
+    }
+}
+
+// Toggle Coupons Dropdown
+function toggleCouponsDropdown() {
+    const dropdown = document.getElementById("coupons-dropdown");
+    if (dropdown) {
+        dropdown.classList.toggle("open");
+    }
 }
 
 // Fetch cafes from backend Express / Supabase server
@@ -574,6 +633,21 @@ function renderFloorPlanGrid(cafe, floorNum, targetGridId) {
                             totalSummary.innerText = `🪑 전체 일반 좌석: 총 ${stats.totalSeats}석 중 현재 ${stats.freeSeatsCount}석 비어있음`;
                         }
                         
+                        // Refresh user rewards points
+                        if (result.currentPoints !== undefined) {
+                            const pointsEl = document.getElementById("user-points");
+                            if (pointsEl) {
+                                pointsEl.innerText = `${result.currentPoints.toLocaleString()} P`;
+                                pointsEl.classList.add("points-updated");
+                                setTimeout(() => pointsEl.classList.remove("points-updated"), 600);
+                            }
+                        }
+                        
+                        // Show toast notification if points earned
+                        if (result.earnedPoints > 0) {
+                            showToast(`좌석 이용으로 +${result.earnedPoints} P 적립! 🎉`);
+                        }
+                        
                         renderCafeList();
                         renderMap();
                     }
@@ -836,6 +910,19 @@ async function sendChatMessage() {
 
         if (data.reply) {
             appendMessageBubble("bot", data.reply);
+            
+            // Update rewards if coupon was issued or points changed
+            if (data.couponIssued) {
+                await loadUserRewards();
+                showToast(`새 쿠폰 발급 완료! (보너스 +100 P 적립) 🎟️`);
+                // Open coupons list to showcase the new coupon
+                const dropdown = document.getElementById("coupons-dropdown");
+                if (dropdown && !dropdown.classList.contains("open")) {
+                    dropdown.classList.add("open");
+                }
+            } else if (data.points !== undefined) {
+                await loadUserRewards();
+            }
         } else {
             appendMessageBubble("bot", "죄송합니다. 추천 비서와 일시적으로 연결할 수 없습니다. 😢");
         }
@@ -871,4 +958,43 @@ function appendMessageBubble(sender, text) {
     `;
     container.appendChild(bubble);
     container.scrollTop = container.scrollHeight;
+}
+
+// Global Toast Notification Helper
+function showToast(message) {
+    let toast = document.getElementById("toast-container");
+    if (!toast) {
+        toast = document.createElement("div");
+        toast.id = "toast-container";
+        toast.style.cssText = `
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(78, 52, 46, 0.95);
+            color: #FFF;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 700;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        `;
+        document.body.appendChild(toast);
+    }
+    
+    toast.innerHTML = `<span class="material-symbols-outlined" style="font-size: 18px; color: #FFD54F;">stars</span> ${message}`;
+    toast.style.opacity = "1";
+    toast.style.transform = "translateX(-50%) translateY(-10px)";
+    
+    setTimeout(() => {
+        toast.style.opacity = "0";
+        toast.style.transform = "translateX(-50%) translateY(0)";
+    }, 2800);
 }
