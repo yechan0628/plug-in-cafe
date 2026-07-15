@@ -66,17 +66,30 @@ async function loadUserRewards() {
             if (data.coupons.length === 0) {
                 listEl.innerHTML = `<div style="font-size: 10px; color: var(--color-secondary); text-align: center; padding: 10px 0;">보유 중인 쿠폰이 없습니다. 🎟️</div>`;
             } else {
-                listEl.innerHTML = data.coupons.map(coupon => `
-                    <div class="coupon-card">
-                        <div class="coupon-details">
-                            <span class="coupon-name">${coupon.discount}</span>
-                            <span class="coupon-code">코드: ${coupon.code}</span>
+                listEl.innerHTML = data.coupons.map(coupon => {
+                    let statusText = "사용가능";
+                    let statusClass = "available";
+                    if (coupon.used) {
+                        statusText = "사용완료";
+                        statusClass = "used";
+                    } else if (coupon.expired) {
+                        statusText = "기간만료";
+                        statusClass = "expired";
+                    }
+                    
+                    return `
+                        <div class="coupon-card" style="${coupon.expired || coupon.used ? 'opacity: 0.68;' : ''}">
+                            <div class="coupon-details">
+                                <span class="coupon-name">${coupon.discount}</span>
+                                <span class="coupon-code" style="margin-top: 3px;">만료일: ${coupon.expirationDate}</span>
+                                <span class="coupon-code" style="font-size: 8px; opacity: 0.7;">코드: ${coupon.code}</span>
+                            </div>
+                            <span class="coupon-status ${statusClass}">
+                                ${statusText}
+                            </span>
                         </div>
-                        <span class="coupon-status ${coupon.used ? 'used' : 'available'}">
-                            ${coupon.used ? '사용완료' : '사용가능'}
-                        </span>
-                    </div>
-                `).join('');
+                    `;
+                }).join('');
             }
         }
     } catch (err) {

@@ -1156,6 +1156,11 @@ body {
     text-decoration: line-through;
 }
 
+.coupon-status.expired {
+    background-color: #FFEBEE;
+    color: #C62828;
+}
+
 /* Points animation flash keyframes */
 @keyframes pointsPulse {
     0% { transform: scale(1); }

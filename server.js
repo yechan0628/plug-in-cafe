@@ -141,16 +141,46 @@ app.post('/api/seats/toggle', async (req, res) => {
     }
 });
 
-// 3. Get current User profile and coupon list
+// Helper to get count of active (unused and unexpired) coupons
+async function getActiveCouponsCount() {
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    return await prisma.coupon.count({
+        where: {
+            used: false,
+            createdAt: {
+                gte: sevenDaysAgo
+            }
+        }
+    });
+}
+
+// 3. Get current User profile and coupon list with calculated expiration dates
 app.get('/api/user', async (req, res) => {
     try {
         const user = await getOrCreateDefaultUser();
         const coupons = await prisma.coupon.findMany({
             orderBy: { createdAt: 'desc' }
         });
+        
+        // Add YYYY-MM-DD formatted expiration date (7 days after creation) and check if expired
+        const processedCoupons = coupons.map(c => {
+            const expDate = new Date(new Date(c.createdAt).getTime() + 7 * 24 * 60 * 60 * 1000);
+            const now = new Date();
+            const expired = now > expDate && !c.used;
+            return {
+                id: c.id,
+                code: c.code,
+                discount: c.discount,
+                used: c.used,
+                createdAt: c.createdAt,
+                expired: expired,
+                expirationDate: expDate.toISOString().split('T')[0]
+            };
+        });
+        
         res.json({
             points: user.points,
-            coupons: coupons
+            coupons: processedCoupons
         });
     } catch (err) {
         console.error("Error fetching user data:", err);
@@ -158,12 +188,21 @@ app.get('/api/user', async (req, res) => {
     }
 });
 
-// 4. Claim coupon manually or programmatic
+// 4. Claim coupon manually or programmatically with holding limit check
 app.post('/api/user/claim-coupon', async (req, res) => {
     try {
         const { discount } = req.body;
-        const code = "CPN-" + Math.random().toString(36).substr(2, 9).toUpperCase();
         
+        // Enforce maximum 3 active coupons limit
+        const activeCount = await getActiveCouponsCount();
+        if (activeCount >= 3) {
+            return res.status(400).json({ 
+                success: false, 
+                error: "보유 가능한 미사용 쿠폰 한도(최대 3장)를 초과했습니다. 기존 쿠폰을 먼저 사용해 주세요!" 
+            });
+        }
+        
+        const code = "CPN-" + Math.random().toString(36).substr(2, 9).toUpperCase();
         const newCoupon = await prisma.coupon.create({
             data: {
                 code: code,
@@ -305,23 +344,29 @@ ${couponsList}
             // Remove the coupon tag from the reply text
             replyText = replyText.replace(couponMatch[0], "").trim();
             
-            // Create coupon in database
-            const code = "CPN-" + Math.random().toString(36).substr(2, 9).toUpperCase();
-            newCouponData = await prisma.coupon.create({
-                data: {
-                    code: code,
-                    discount: discountName || "챗봇 발급 혜택 쿠폰 🎫",
-                    used: false
-                }
-            });
-            couponIssued = true;
-            
-            // Bonus points for chatbot interactions
-            const updatedUser = await prisma.user.update({
-                where: { id: 1 },
-                data: { points: user.points + 100 }
-            });
-            currentPoints = updatedUser.points;
+            // Check active coupon count constraint
+            const activeCount = await getActiveCouponsCount();
+            if (activeCount >= 3) {
+                replyText += "\n\n⚠️ **쿠폰 발급 제한**: 현재 미사용 쿠폰을 이미 3장 보유하고 계십니다. 보유 한도(최대 3장)를 초과하여 신규 발급이 제한되었으니 기존 쿠폰을 먼저 사용해 주세요!";
+            } else {
+                // Create coupon in database
+                const code = "CPN-" + Math.random().toString(36).substr(2, 9).toUpperCase();
+                newCouponData = await prisma.coupon.create({
+                    data: {
+                        code: code,
+                        discount: discountName || "챗봇 발급 혜택 쿠폰 🎫",
+                        used: false
+                    }
+                });
+                couponIssued = true;
+                
+                // Bonus points for chatbot interactions
+                const updatedUser = await prisma.user.update({
+                    where: { id: 1 },
+                    data: { points: user.points + 100 }
+                });
+                currentPoints = updatedUser.points;
+            }
         }
         
         res.json({ 
