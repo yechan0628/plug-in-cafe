@@ -14,20 +14,38 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('.')); // Serve static frontend files from current directory
 
-// Initialize Prisma Client with PostgreSQL Driver Adapter for Prisma 7
-const connectionString = process.env.DATABASE_URL;
-if (!connectionString) {
-    console.error("Error: DATABASE_URL must be defined in your .env or .env.local file.");
-    process.exit(1);
-}
+// Middleware to catch database connection configuration errors gracefully
+app.use((req, res, next) => {
+    if (req.path.startsWith('/api/') && !prisma) {
+        return res.status(500).json({
+            error: "DATABASE_URL이 설정되지 않았거나 Prisma Client 초기화에 실패했습니다. Vercel Project Settings에서 환경 변수를 등록한 뒤 Redeploy를 실행했는지 확인해 주세요!"
+        });
+    }
+    next();
+});
 
-const pool = new Pool({ connectionString });
-const adapter = new PrismaPg(pool);
-const prisma = new PrismaClient({ adapter });
-console.log("Prisma Client with PgAdapter initialized successfully.");
+// Initialize Prisma Client with PostgreSQL Driver Adapter for Prisma 7
+let prisma;
+const connectionString = process.env.DATABASE_URL;
+
+if (!connectionString) {
+    console.error("Error: DATABASE_URL must be defined in your environment variables.");
+} else {
+    try {
+        const pool = new Pool({ connectionString });
+        const adapter = new PrismaPg(pool);
+        prisma = new PrismaClient({ adapter });
+        console.log("Prisma Client with PgAdapter initialized successfully.");
+    } catch (err) {
+        console.error("Failed to initialize Prisma Client:", err);
+    }
+}
 
 // Self-healing database initializer for User and Coupon
 async function getOrCreateDefaultUser() {
+    if (!prisma) {
+        return { id: 1, points: 1000 };
+    }
     let user = await prisma.user.findUnique({
         where: { id: 1 }
     });
