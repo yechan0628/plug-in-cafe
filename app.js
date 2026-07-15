@@ -435,9 +435,6 @@ function selectCafe(id) {
     // Render Bottom Sheet details
     renderBottomSheet(cafe);
     bottomSheet.classList.add("open");
-    
-    // Sync Simulation Console Controls
-    syncSimulationPanel(cafe);
 }
 
 // Render Bottom Sheet Content
@@ -683,16 +680,6 @@ function closeBottomSheet() {
     renderCafeList();
 }
 
-// Sync Simulation Console with the selected cafe
-function syncSimulationPanel(cafe) {
-    document.querySelectorAll(".sim-btn").forEach(btn => {
-        btn.classList.remove("active");
-        if (btn.getAttribute("data-congestion") === cafe.congestion) {
-            btn.classList.add("active");
-        }
-    });
-}
-
 // Set up event listeners
 function setupEventListeners() {
     // Search input handler
@@ -718,27 +705,6 @@ function setupEventListeners() {
         filterParking.classList.toggle("active");
         currentFilters.parking = filterParking.classList.contains("active");
         renderCafeList();
-    });
-
-    // Simulation Console Congestion Buttons
-    document.querySelectorAll(".sim-btn").forEach(button => {
-        button.addEventListener("click", (e) => {
-            if (!selectedCafe) {
-                alert("상태를 변경할 카페를 먼저 지도나 목록에서 선택해 주세요!");
-                return;
-            }
-            const congestion = e.target.getAttribute("data-congestion");
-            selectedCafe.congestion = congestion;
-            
-            // Auto-adjust seat occupancy according to congestion level
-            adjustSeatsForCongestion(selectedCafe, congestion);
-            
-            // Refresh views
-            syncSimulationPanel(selectedCafe);
-            renderBottomSheet(selectedCafe);
-            renderCafeList();
-            renderMap();
-        });
     });
 
     // Map Zoom & Pan event listeners
@@ -818,60 +784,7 @@ function setupEventListeners() {
     }
 }
 
-// Adjust seats based on chosen congestion level
-function adjustSeatsForCongestion(cafe, congestion) {
-    let targetRatio = 0.2; // low
-    if (congestion === "mid") targetRatio = 0.6;
-    else if (congestion === "high") targetRatio = 0.9;
-    
-    cafe.seats.forEach(seat => {
-        if (seat.type === "seat") {
-            seat.occupied = Math.random() < targetRatio;
-        }
-    });
-}
 
-// Randomize active cafe seat occupancy from Simulation Panel
-function triggerRandomSimulation() {
-    if (!selectedCafe) {
-        // Randomize all cafes if none selected
-        cafes.forEach(c => {
-            c.seats.forEach(seat => {
-                if (seat.type === "seat") {
-                    seat.occupied = Math.random() > 0.5;
-                }
-            });
-            // Update congestion based on ratio
-            const seats = c.seats.filter(s => s.type === "seat");
-            const occupied = seats.filter(s => s.occupied).length;
-            const ratio = occupied / seats.length;
-            if (ratio < 0.4) c.congestion = "low";
-            else if (ratio < 0.75) c.congestion = "mid";
-            else c.congestion = "high";
-        });
-        renderCafeList();
-        renderMap();
-    } else {
-        // Randomize only selected cafe
-        selectedCafe.seats.forEach(seat => {
-            if (seat.type === "seat") {
-                seat.occupied = Math.random() > 0.5;
-            }
-        });
-        // Recalculate congestion
-        const seats = selectedCafe.seats.filter(s => s.type === "seat");
-        const occupied = seats.filter(s => s.occupied).length;
-        const ratio = occupied / seats.length;
-        if (ratio < 0.4) selectedCafe.congestion = "low";
-        else if (ratio < 0.75) selectedCafe.congestion = "mid";
-        else selectedCafe.congestion = "high";
-        
-        syncSimulationPanel(selectedCafe);
-        renderBottomSheet(selectedCafe);
-        renderCafeList();
-        renderMap();
-    }
-}
 
 // Run application on load
 window.onload = init;

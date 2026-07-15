@@ -113,32 +113,7 @@
                 <!-- Pins are rendered in app.js -->
             </svg>
 
-            <!-- Floating Simulation Control Console -->
-            <div class="simulation-panel">
-                <div class="sim-title">
-                    <span class="material-symbols-outlined" style="color:var(--color-primary);">science</span>
-                    <span>실시간 시뮬레이터</span>
-                </div>
-                
-                <!-- Congestion Sim -->
-                <div class="sim-control-group">
-                    <span class="sim-control-label">현재 카페 혼잡도 조절</span>
-                    <div class="sim-btn-row">
-                        <button class="sim-btn" data-congestion="low">여유</button>
-                        <button class="sim-btn" data-congestion="mid">보통</button>
-                        <button class="sim-btn" data-congestion="high">혼잡</button>
-                    </div>
-                </div>
-                
-                <!-- Randomize Seats Sim -->
-                <div class="sim-control-group">
-                    <span class="sim-control-label">좌석 상태 제어</span>
-                    <button class="action-btn" onclick="triggerRandomSimulation()">
-                        <span class="material-symbols-outlined" style="font-size:16px;">shuffle</span>
-                        전체 좌석 랜덤 갱신
-                    </button>
-                </div>
-            </div>
+
 
             <!-- Slide-up Details Bottom Sheet -->
             <div class="bottom-sheet" id="bottom-sheet">
