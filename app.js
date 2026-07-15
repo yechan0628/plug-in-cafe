@@ -865,15 +865,15 @@ window.onload = init;
 
 // AI Chatbot Client Side Interactivity
 function toggleAiChat() {
-    const chatContainer = document.getElementById("ai-chat-container");
-    if (chatContainer) {
-        chatContainer.classList.toggle("open");
+    const chatCard = document.getElementById("ai-chat-card");
+    if (chatCard) {
+        chatCard.classList.toggle("active");
     }
 }
 
 async function sendChatMessage() {
     const input = document.getElementById("chat-input");
-    const container = document.getElementById("chat-messages-container");
+    const container = document.getElementById("chat-messages");
     if (!input || !container || !input.value.trim()) return;
 
     const userMessageText = input.value.trim();
@@ -885,13 +885,11 @@ async function sendChatMessage() {
     // Add Typing Indicator Spinner
     const spinner = document.createElement("div");
     spinner.id = "chat-typing-indicator";
-    spinner.className = "chat-message bot loading";
+    spinner.className = "typing-indicator";
     spinner.innerHTML = `
-        <div class="message-bubble">
-            <span class="typing-dot"></span>
-            <span class="typing-dot"></span>
-            <span class="typing-dot"></span>
-        </div>
+        <span class="typing-dot"></span>
+        <span class="typing-dot"></span>
+        <span class="typing-dot"></span>
     `;
     container.appendChild(spinner);
     container.scrollTop = container.scrollHeight;
@@ -935,11 +933,11 @@ async function sendChatMessage() {
 }
 
 function appendMessageBubble(sender, text) {
-    const container = document.getElementById("chat-messages-container");
+    const container = document.getElementById("chat-messages");
     if (!container) return;
 
     const bubble = document.createElement("div");
-    bubble.className = `chat-message ${sender}`;
+    bubble.className = `message ${sender === 'user' ? 'user-message' : 'ai-message'}`;
     
     // HTML safe escape to prevent XSS while converting double newlines to paragraph breaks
     const safeText = text
@@ -951,11 +949,7 @@ function appendMessageBubble(sender, text) {
         .replace(/\n\n/g, "<br><br>")
         .replace(/\n/g, "<br>");
 
-    bubble.innerHTML = `
-        <div class="message-bubble">
-            ${safeText}
-        </div>
-    `;
+    bubble.innerHTML = safeText;
     container.appendChild(bubble);
     container.scrollTop = container.scrollHeight;
 }
