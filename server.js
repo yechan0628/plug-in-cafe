@@ -4,6 +4,7 @@ const { Pool } = require('pg');
 const { PrismaPg } = require('@prisma/adapter-pg');
 const { PrismaClient } = require('@prisma/client');
 const { GoogleGenAI } = require('@google/generative-ai');
+const Groq = require('groq-sdk');
 require('dotenv').config();
 
 const app = express();
@@ -276,14 +277,66 @@ ${couponsList}
 `;
 
         const geminiApiKey = process.env.GEMINI_API_KEY;
+        const groqApiKey = process.env.GROQ_API_KEY;
         let replyText = "";
         let couponIssued = false;
         let newCouponData = null;
         let currentPoints = user.points;
 
-        if (!geminiApiKey || geminiApiKey === 'YOUR_GEMINI_API_KEY_HERE') {
+        const hasGroqKey = groqApiKey && groqApiKey !== 'YOUR_GROQ_API_KEY_HERE';
+        const hasGeminiKey = geminiApiKey && geminiApiKey !== 'YOUR_GEMINI_API_KEY_HERE';
+
+        if (hasGroqKey) {
+            // Call Groq API using groq-sdk with multi-turn chat support
+            console.log("Calling Groq API...");
+            const groq = new Groq({ apiKey: groqApiKey });
+            
+            // Format history for Groq's OpenAI-compatible format: [{ role: 'system'|'user'|'assistant', content: '...' }]
+            const messages = [
+                { role: 'system', content: systemPrompt }
+            ];
+            
+            const historyToMap = (history && history.length > 0) ? history : [{ role: 'user', parts: [{ text: message }] }];
+            historyToMap.forEach(h => {
+                // Filter out default welcome message to keep token count minimal
+                if (h.role === 'model' && h.parts[0].text.includes("플러그인 카페 AI 비서입니다")) {
+                    return;
+                }
+                messages.push({
+                    role: h.role === 'model' ? 'assistant' : 'user',
+                    content: h.parts[0].text
+                });
+            });
+
+            const chatCompletion = await groq.chat.completions.create({
+                messages: messages,
+                model: 'llama-3.3-70b-versatile',
+                temperature: 0.7,
+                max_tokens: 1024
+            });
+            replyText = chatCompletion.choices[0].message.content;
+        } else if (hasGeminiKey) {
+            // Call Real Gemini API using GoogleGenAI with multi-turn chat support
+            const ai = new GoogleGenAI({ apiKey: geminiApiKey });
+            const model = ai.getGenerativeModel({ model: "gemini-2.5-flash" });
+            
+            // Format history for Gemini API: [{ role: 'user'|'model', parts: [{ text: '...' }] }]
+            // Exclude the last user message which is passed to sendMessage()
+            const historyData = (history || []).slice(0, -1).map(h => ({
+                role: h.role,
+                parts: [{ text: h.parts[0].text }]
+            }));
+
+            const chat = model.startChat({
+                history: historyData,
+                systemInstruction: systemPrompt
+            });
+            
+            const result = await chat.sendMessage(message);
+            replyText = result.response.text();
+        } else {
             // Simulated fallback mode
-            console.log("Simulating Gemini AI Response (API Key is not configured)");
+            console.log("Simulating AI Response (Neither Groq nor Gemini Key is configured)");
             const query = message.toLowerCase();
             
             if (query.includes("쿠폰") && (query.includes("줘") || query.includes("발급") || query.includes("추가"))) {
@@ -316,25 +369,6 @@ ${couponsList}
                 });
                 replyText = `🔌 안녕하세요! 현재 신촌역 인근에서 콘센트 여유 자리가 가장 많은 매장은 **${sortedByPlugs[0].name}** 입니다. 작업하기 좋은 최적의 환경을 원하신다면 해당 매장의 도면을 클릭해 상세 좌석을 확인해보세요!`;
             }
-        } else {
-            // Call Real Gemini API using GoogleGenAI with multi-turn chat support
-            const ai = new GoogleGenAI({ apiKey: geminiApiKey });
-            const model = ai.getGenerativeModel({ model: "gemini-2.5-flash" });
-            
-            // Format history for Gemini API: [{ role: 'user'|'model', parts: [{ text: '...' }] }]
-            // Exclude the last user message which is passed to sendMessage()
-            const historyData = (history || []).slice(0, -1).map(h => ({
-                role: h.role,
-                parts: [{ text: h.parts[0].text }]
-            }));
-
-            const chat = model.startChat({
-                history: historyData,
-                systemInstruction: systemPrompt
-            });
-            
-            const result = await chat.sendMessage(message);
-            replyText = result.response.text();
         }
 
         // Post-process the AI response to handle coupon issuance
