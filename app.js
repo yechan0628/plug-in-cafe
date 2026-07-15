@@ -1,282 +1,6 @@
 // Mock Data for Cafe Plug Finder
-const cafes = [
-    {
-        id: 1,
-        name: "모카 라떼 하우스",
-        rating: 4.8,
-        distance: "150m",
-        address: "서울 마포구 와우산로 21길 12",
-        hours: "09:00 - 22:00",
-        parking: true,
-        congestion: "low", // low (여유), mid (보통), high (혼잡)
-        x: 250, // SVG map X
-        y: 180, // SVG map Y
-        logoUrl: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=100&auto=format&fit=crop&q=80",
-        seats: [
-            { id: "S1", type: "seat", plugged: true, occupied: false, label: "창가 01" },
-            { id: "S2", type: "seat", plugged: true, occupied: false, label: "창가 02" },
-            { id: "S3", type: "seat", plugged: true, occupied: true, label: "창가 03" },
-            { id: "W1", type: "wall" },
-            { id: "W2", type: "wall" },
-            { id: "C1", type: "counter" },
-            { id: "E1", type: "empty" },
-            { id: "E2", type: "empty" },
-            { id: "S4", type: "seat", plugged: true, occupied: false, label: "테이블 01" },
-            { id: "S5", type: "seat", plugged: false, occupied: false, label: "테이블 02" },
-            { id: "S6", type: "seat", plugged: false, occupied: true, label: "테이블 03" },
-            { id: "S7", type: "seat", plugged: true, occupied: true, label: "테이블 04" },
-            { id: "S8", type: "seat", plugged: true, occupied: false, label: "소파 01" },
-            { id: "S9", type: "seat", plugged: true, occupied: false, label: "소파 02" },
-            { id: "S10", type: "seat", plugged: false, occupied: false, label: "소파 03" },
-            { id: "S11", type: "seat", plugged: false, occupied: true, label: "소파 04" },
-        ]
-    },
-    {
-        id: 2,
-        name: "스타벅스 홍대공항철도역점",
-        rating: 4.5,
-        distance: "320m",
-        address: "서울 마포구 양화로 188",
-        hours: "07:00 - 23:00",
-        parking: false,
-        congestion: "high",
-        x: 480,
-        y: 350,
-        logoUrl: "https://upload.wikimedia.org/wikipedia/en/d/d3/Starbucks_Corporation_Logo_2011.svg",
-        seats: [
-            // F1: Counter (span 5), Wall, 8 seats
-            { id: "S1", type: "seat", plugged: true, occupied: true, label: "1인석 01", floor: 1 },
-            { id: "S2", type: "seat", plugged: true, occupied: true, label: "1인석 02", floor: 1 },
-            { id: "S3", type: "seat", plugged: true, occupied: true, label: "1인석 03", floor: 1 },
-            { id: "S4", type: "seat", plugged: true, occupied: true, label: "1인석 04", floor: 1 },
-            { id: "C1", type: "counter", span: 5, floor: 1 }, // Spans 5 columns!
-            { id: "W1", type: "wall", floor: 1 },
-            { id: "S1_3", type: "seat", plugged: false, occupied: false, label: "1인석 05", floor: 1 },
-            { id: "S1_4", type: "seat", plugged: false, occupied: true, label: "1인석 06", floor: 1 },
-            { id: "S1_5", type: "seat", plugged: true, occupied: false, label: "소파 01", floor: 1 },
-            { id: "S1_6", type: "seat", plugged: true, occupied: true, label: "소파 02", floor: 1 },
-            // F2: 12 seats!
-            { id: "S5", type: "seat", plugged: true, occupied: false, label: "1인석 07", floor: 2 },
-            { id: "S6", type: "seat", plugged: true, occupied: true, label: "1인석 08", floor: 2 },
-            { id: "S7", type: "seat", plugged: false, occupied: true, label: "2인석 01", floor: 2 },
-            { id: "S8", type: "seat", plugged: false, occupied: true, label: "2인석 02", floor: 2 },
-            { id: "S9", type: "seat", plugged: true, occupied: true, label: "스터디 01", floor: 2 },
-            { id: "S10", type: "seat", plugged: true, occupied: false, label: "스터디 02", floor: 2 },
-            { id: "S2_3", type: "seat", plugged: true, occupied: false, label: "스터디 03", floor: 2 },
-            { id: "S2_4", type: "seat", plugged: true, occupied: true, label: "스터디 04", floor: 2 },
-            { id: "S2_5", type: "seat", plugged: false, occupied: false, label: "2인석 03", floor: 2 },
-            { id: "S2_6", type: "seat", plugged: false, occupied: true, label: "2인석 04", floor: 2 },
-            { id: "S2_7", type: "seat", plugged: true, occupied: false, label: "1인석 09", floor: 2 },
-            { id: "S2_8", type: "seat", plugged: true, occupied: true, label: "1인석 10", floor: 2 }
-        ]
-    },
-    {
-        id: 3,
-        name: "커피랩 팩토리",
-        rating: 4.9,
-        distance: "450m",
-        address: "서울 마포구 와우산로29길 4-13",
-        hours: "10:00 - 21:00",
-        parking: true,
-        congestion: "mid",
-        x: 650,
-        y: 190,
-        logoUrl: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=100&auto=format&fit=crop&q=80",
-        seats: [
-            { id: "S1", type: "seat", plugged: true, occupied: false, label: "바 01" },
-            { id: "S2", type: "seat", plugged: true, occupied: false, label: "바 02" },
-            { id: "S3", type: "seat", plugged: true, occupied: false, label: "바 03" },
-            { id: "S4", type: "seat", plugged: true, occupied: true, label: "바 04" },
-            { id: "E1", type: "empty" },
-            { id: "C1", type: "counter" },
-            { id: "S5", type: "seat", plugged: false, occupied: false, label: "테라스 01" },
-            { id: "S6", type: "seat", plugged: false, occupied: false, label: "테라스 02" },
-            { id: "S7", type: "seat", plugged: true, occupied: true, label: "작업대 01" },
-            { id: "S8", type: "seat", plugged: true, occupied: false, label: "작업대 02" },
-        ]
-    },
-    {
-        id: 4,
-        name: "할리스 커피 신촌점",
-        rating: 4.2,
-        distance: "600m",
-        address: "서울 서대문구 연세로 34",
-        hours: "00:00 - 24:00",
-        parking: false,
-        congestion: "mid",
-        x: 720,
-        y: 420,
-        logoUrl: "https://www.hollys.co.kr/websrc/images/layout/logo_210302.gif",
-        seats: [
-            { id: "S1", type: "seat", plugged: true, occupied: true, label: "1층 01", floor: 1 },
-            { id: "S2", type: "seat", plugged: true, occupied: false, label: "1층 02", floor: 1 },
-            { id: "S3", type: "seat", plugged: false, occupied: false, label: "1층 03", floor: 1 },
-            { id: "S4", type: "seat", plugged: false, occupied: true, label: "1층 04", floor: 1 },
-            { id: "C1", type: "counter", floor: 1 },
-            { id: "W1", type: "wall", floor: 1 },
-            { id: "S5", type: "seat", plugged: true, occupied: false, label: "2층 01", floor: 2 },
-            { id: "S6", type: "seat", plugged: true, occupied: true, label: "2층 02", floor: 2 },
-            { id: "S7", type: "seat", plugged: true, occupied: false, label: "2층 03", floor: 2 },
-            { id: "S8", type: "seat", plugged: true, occupied: true, label: "2층 04", floor: 2 },
-            { id: "S9", type: "seat", plugged: true, occupied: false, label: "2층 05", floor: 2 },
-            { id: "S10", type: "seat", plugged: true, occupied: true, label: "2층 06", floor: 2 },
-        ]
-    },
-    {
-        id: 5,
-        name: "오브젝트 카페",
-        rating: 4.6,
-        distance: "820m",
-        address: "서울 마포구 와우산로37길 13",
-        hours: "11:00 - 22:00",
-        parking: true,
-        congestion: "low",
-        x: 180,
-        y: 460,
-        logoUrl: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=100&auto=format&fit=crop&q=80",
-        seats: [
-            { id: "S1", type: "seat", plugged: true, occupied: false, label: "A-1" },
-            { id: "S2", type: "seat", plugged: true, occupied: false, label: "A-2" },
-            { id: "S3", type: "seat", plugged: false, occupied: false, label: "B-1" },
-            { id: "S4", type: "seat", plugged: false, occupied: false, label: "B-2" },
-            { id: "C1", type: "counter" },
-            { id: "E1", type: "empty" },
-            { id: "S5", type: "seat", plugged: true, occupied: false, label: "C-1" },
-            { id: "S6", type: "seat", plugged: true, occupied: true, label: "C-2" },
-        ]
-    },
-    {
-        id: 6,
-        name: "투썸플레이스 신촌연세로점",
-        rating: 4.4,
-        distance: "250m",
-        address: "서울 서대문구 연세로 12",
-        hours: "08:00 - 23:00",
-        parking: true,
-        congestion: "mid",
-        x: 550,
-        y: 220,
-        logoUrl: "https://upload.wikimedia.org/wikipedia/commons/e/ee/A_Twosome_Place_square_logo.png",
-        seats: [
-            { id: "S1", type: "seat", plugged: true, occupied: false, label: "T1", floor: 1 },
-            { id: "S2", type: "seat", plugged: true, occupied: true, label: "T2", floor: 1 },
-            { id: "S3", type: "seat", plugged: false, occupied: false, label: "T3", floor: 1 },
-            { id: "S4", type: "seat", plugged: false, occupied: false, label: "T4", floor: 1 },
-            { id: "W1", type: "wall", floor: 1 },
-            { id: "C1", type: "counter", floor: 1 },
-            { id: "S5", type: "seat", plugged: true, occupied: false, label: "창가 01", floor: 2 },
-            { id: "S6", type: "seat", plugged: true, occupied: true, label: "창가 02", floor: 2 },
-            { id: "S7", type: "seat", plugged: true, occupied: false, label: "창가 03", floor: 2 },
-            { id: "S8", type: "seat", plugged: true, occupied: true, label: "창가 04", floor: 2 }
-        ]
-    },
-    {
-        id: 7,
-        name: "이디야커피 신촌역점",
-        rating: 4.1,
-        distance: "410m",
-        address: "서울 서대문구 신촌로 109",
-        hours: "08:00 - 22:00",
-        parking: false,
-        congestion: "low",
-        x: 880,
-        y: 130,
-        logoUrl: "./ediya_logo.png",
-        seats: [
-            { id: "S1", type: "seat", plugged: true, occupied: false, label: "창가 01" },
-            { id: "S2", type: "seat", plugged: true, occupied: false, label: "창가 02" },
-            { id: "W1", type: "wall" },
-            { id: "C1", type: "counter" },
-            { id: "S3", type: "seat", plugged: false, occupied: true, label: "테이블 01" },
-            { id: "S4", type: "seat", plugged: false, occupied: false, label: "테이블 02" },
-            { id: "S5", type: "seat", plugged: true, occupied: true, label: "테이블 03" },
-            { id: "S6", type: "seat", plugged: true, occupied: false, label: "테이블 04" }
-        ]
-    },
-    {
-        id: 8,
-        name: "메가MGC커피 신촌점",
-        rating: 4.3,
-        distance: "530m",
-        address: "서울 서대문구 연세로 11",
-        hours: "07:00 - 22:30",
-        parking: false,
-        congestion: "high",
-        x: 850,
-        y: 410,
-        logoUrl: "https://upload.wikimedia.org/wikipedia/commons/7/7b/Mega_MGC_Coffee_logo.png",
-        seats: [
-            { id: "S1", type: "seat", plugged: true, occupied: true, label: "A-1" },
-            { id: "S2", type: "seat", plugged: true, occupied: true, label: "A-2" },
-            { id: "C1", type: "counter" },
-            { id: "S3", type: "seat", plugged: false, occupied: true, label: "B-1" },
-            { id: "S4", type: "seat", plugged: false, occupied: true, label: "B-2" },
-            { id: "S5", type: "seat", plugged: false, occupied: true, label: "B-3" },
-            { id: "S6", type: "seat", plugged: true, occupied: false, label: "C-1" },
-            { id: "S7", type: "seat", plugged: true, occupied: true, label: "C-2" }
-        ]
-    },
-    {
-        id: 9,
-        name: "커피빈 신촌현대백화점점",
-        rating: 4.6,
-        distance: "680m",
-        address: "서울 서대문구 신촌로 83",
-        hours: "09:00 - 22:00",
-        parking: true,
-        congestion: "mid",
-        x: 280,
-        y: 560,
-        logoUrl: "./coffeebean_logo.png",
-        seats: [
-            { id: "S1", type: "seat", plugged: true, occupied: false, label: "라운지 01" },
-            { id: "S2", type: "seat", plugged: true, occupied: false, label: "라운지 02" },
-            { id: "S3", type: "seat", plugged: true, occupied: true, label: "라운지 03" },
-            { id: "S4", type: "seat", plugged: true, occupied: false, label: "라운지 04" },
-            { id: "C1", type: "counter" },
-            { id: "W1", type: "wall" },
-            { id: "S5", type: "seat", plugged: false, occupied: false, label: "테라스 01" },
-            { id: "S6", type: "seat", plugged: false, occupied: true, label: "테라스 02" },
-            { id: "S7", type: "seat", plugged: true, occupied: false, label: "바 01" },
-            { id: "S8", type: "seat", plugged: true, occupied: true, label: "바 02" },
-            { id: "S9", type: "seat", plugged: true, occupied: false, label: "바 03" },
-            { id: "S10", type: "seat", plugged: true, occupied: false, label: "바 04" }
-        ]
-    },
-    {
-        id: 10,
-        name: "탐앤탐스 신촌점",
-        rating: 4.2,
-        distance: "750m",
-        address: "서울 서대문구 연세로5길 26",
-        hours: "00:00 - 24:00",
-        parking: false,
-        congestion: "mid",
-        x: 600,
-        y: 580,
-        logoUrl: "./tomntoms_logo.png",
-        seats: [
-            // F1: 8 seats
-            { id: "S1", type: "seat", plugged: true, occupied: false, label: "1층 01", floor: 1 },
-            { id: "S2", type: "seat", plugged: true, occupied: true, label: "1층 02", floor: 1 },
-            { id: "S7", type: "seat", plugged: true, occupied: false, label: "1층 03", floor: 1 },
-            { id: "S8", type: "seat", plugged: true, occupied: true, label: "1층 04", floor: 1 },
-            { id: "S9", type: "seat", plugged: false, occupied: false, label: "1층 소파 01", floor: 1 },
-            { id: "S10", type: "seat", plugged: false, occupied: false, label: "1층 소파 02", floor: 1 },
-            { id: "W1", type: "wall", floor: 1 },
-            { id: "C1", type: "counter", floor: 1 },
-            // F2: 8 seats
-            { id: "S3", type: "seat", plugged: true, occupied: false, label: "2층 소파 01", floor: 2 },
-            { id: "S4", type: "seat", plugged: true, occupied: false, label: "2층 소파 02", floor: 2 },
-            { id: "S5", type: "seat", plugged: false, occupied: true, label: "2층 스터디 01", floor: 2 },
-            { id: "S6", type: "seat", plugged: false, occupied: false, label: "2층 스터디 02", floor: 2 },
-            { id: "S11", type: "seat", plugged: true, occupied: true, label: "2층 2인석 01", floor: 2 },
-            { id: "S12", type: "seat", plugged: true, occupied: true, label: "2층 2인석 02", floor: 2 },
-            { id: "S13", type: "seat", plugged: false, occupied: false, label: "2층 2인석 03", floor: 2 },
-            { id: "S14", type: "seat", plugged: false, occupied: false, label: "2층 2인석 04", floor: 2 }
-        ]
-    }
-];
+let cafes = [];
+
 
 let selectedCafe = null;
 let zoom = 1.0;
@@ -303,12 +27,31 @@ const bottomSheet = document.getElementById("bottom-sheet");
 const mapSvg = document.getElementById("map-svg");
 
 // Initialize application
-function init() {
-    augmentCafeDatabase();
+async function init() {
+    await loadCafes();
     createSvgPatterns();
-    renderMap();
-    renderCafeList();
     setupEventListeners();
+}
+
+// Fetch cafes from backend Express / Supabase server
+async function loadCafes() {
+    try {
+        const res = await fetch('/api/cafes');
+        cafes = await res.json();
+        renderCafeList();
+        renderMap();
+        
+        // If a cafe was selected, update its bottom sheet as well
+        if (selectedCafe) {
+            const freshSelected = cafes.find(c => c.id === selectedCafe.id);
+            if (freshSelected) {
+                selectedCafe = freshSelected;
+                renderBottomSheet(selectedCafe);
+            }
+        }
+    } catch (err) {
+        console.error("Failed to load cafes from backend:", err);
+    }
 }
 
 // Automatically augment cafe database on startup with floor and seat shape metadata
@@ -796,28 +539,47 @@ function renderFloorPlanGrid(cafe, floorNum, targetGridId) {
             `;
             
             // Seat Click Interactivity (Toggle Busy/Free)
-            cell.addEventListener("click", () => {
-                element.occupied = !element.occupied;
-                
-                const hasSecondFloor = cafe.seats.some(s => s.floor === 2);
-                renderFloorPlanGrid(cafe, 1, "floor-plan-grid-f1");
-                if (hasSecondFloor) {
-                    renderFloorPlanGrid(cafe, 2, "floor-plan-grid-f2");
+            cell.addEventListener("click", async () => {
+                const newOccupiedState = !element.occupied;
+                try {
+                    const res = await fetch('/api/seats/toggle', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            cafeId: cafe.id,
+                            seatKey: element.id,
+                            floor: element.floor || 1,
+                            occupied: newOccupiedState
+                        })
+                    });
+                    const result = await res.json();
+                    
+                    if (result.success) {
+                        element.occupied = newOccupiedState;
+                        
+                        const hasSecondFloor = cafe.seats.some(s => s.floor === 2);
+                        renderFloorPlanGrid(cafe, 1, "floor-plan-grid-f1");
+                        if (hasSecondFloor) {
+                            renderFloorPlanGrid(cafe, 2, "floor-plan-grid-f2");
+                        }
+                        
+                        // Update statistics paragraphs dynamically
+                        const stats = getCafeStats(cafe);
+                        const statsSummary = document.querySelector(".plug-stats-summary");
+                        if (statsSummary) {
+                            statsSummary.innerText = `🔌 콘센트 좌석: 총 ${stats.totalPlugCount}석 중 현재 ${stats.freePlugCount}석 비어있음`;
+                        }
+                        const totalSummary = document.querySelector(".total-stats-summary");
+                        if (totalSummary) {
+                            totalSummary.innerText = `🪑 전체 일반 좌석: 총 ${stats.totalSeats}석 중 현재 ${stats.freeSeatsCount}석 비어있음`;
+                        }
+                        
+                        renderCafeList();
+                        renderMap();
+                    }
+                } catch (err) {
+                    console.error("Failed to update seat occupancy status:", err);
                 }
-                
-                // Update statistics paragraphs dynamically
-                const stats = getCafeStats(cafe);
-                const statsSummary = document.querySelector(".plug-stats-summary");
-                if (statsSummary) {
-                    statsSummary.innerText = `🔌 콘센트 좌석: 총 ${stats.totalPlugCount}석 중 현재 ${stats.freePlugCount}석 비어있음`;
-                }
-                const totalSummary = document.querySelector(".total-stats-summary");
-                if (totalSummary) {
-                    totalSummary.innerText = `🪑 전체 일반 좌석: 총 ${stats.totalSeats}석 중 현재 ${stats.freeSeatsCount}석 비어있음`;
-                }
-                
-                renderCafeList();
-                renderMap();
             });
         }
         
@@ -1026,3 +788,87 @@ function triggerRandomSimulation() {
 
 // Run application on load
 window.onload = init;
+
+// AI Chatbot Client Side Interactivity
+function toggleAiChat() {
+    const chatContainer = document.getElementById("ai-chat-container");
+    if (chatContainer) {
+        chatContainer.classList.toggle("open");
+    }
+}
+
+async function sendChatMessage() {
+    const input = document.getElementById("chat-input");
+    const container = document.getElementById("chat-messages-container");
+    if (!input || !container || !input.value.trim()) return;
+
+    const userMessageText = input.value.trim();
+    input.value = ""; // Clear input immediately
+
+    // Append User Message Bubble
+    appendMessageBubble("user", userMessageText);
+    
+    // Add Typing Indicator Spinner
+    const spinner = document.createElement("div");
+    spinner.id = "chat-typing-indicator";
+    spinner.className = "chat-message bot loading";
+    spinner.innerHTML = `
+        <div class="message-bubble">
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+        </div>
+    `;
+    container.appendChild(spinner);
+    container.scrollTop = container.scrollHeight;
+
+    try {
+        const res = await fetch("/api/ai/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: userMessageText })
+        });
+        const data = await res.json();
+        
+        // Remove Typing Indicator
+        const existingSpinner = document.getElementById("chat-typing-indicator");
+        if (existingSpinner) existingSpinner.remove();
+
+        if (data.reply) {
+            appendMessageBubble("bot", data.reply);
+        } else {
+            appendMessageBubble("bot", "죄송합니다. 추천 비서와 일시적으로 연결할 수 없습니다. 😢");
+        }
+    } catch (err) {
+        console.error("AI Chat Error:", err);
+        const existingSpinner = document.getElementById("chat-typing-indicator");
+        if (existingSpinner) existingSpinner.remove();
+        appendMessageBubble("bot", "네트워크 에러가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+    }
+}
+
+function appendMessageBubble(sender, text) {
+    const container = document.getElementById("chat-messages-container");
+    if (!container) return;
+
+    const bubble = document.createElement("div");
+    bubble.className = `chat-message ${sender}`;
+    
+    // HTML safe escape to prevent XSS while converting double newlines to paragraph breaks
+    const safeText = text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;")
+        .replace(/\n\n/g, "<br><br>")
+        .replace(/\n/g, "<br>");
+
+    bubble.innerHTML = `
+        <div class="message-bubble">
+            ${safeText}
+        </div>
+    `;
+    container.appendChild(bubble);
+    container.scrollTop = container.scrollHeight;
+}

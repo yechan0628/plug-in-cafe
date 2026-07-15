@@ -1,0 +1,23 @@
+{
+  "name": "plug-in-cafe",
+  "version": "1.0.0",
+  "description": "실시간 콘센트 및 좌석 현황 관리 웹 어플리케이션",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "seed": "node seed.js"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
+    "@supabase/supabase-js": "^2.39.8",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "pg": "^8.22.0"
+  },
+  "devDependencies": {
+    "prisma": "^7.8.0"
+  }
+}

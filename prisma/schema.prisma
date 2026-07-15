@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Cafe {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(100)
+  rating    Decimal  @default(0.0) @db.Decimal(2, 1)
+  distance  String?  @db.VarChar(20)
+  address   String   @db.VarChar(255)
+  hours     String?  @db.VarChar(100)
+  parking   Boolean  @default(false)
+  congestion String  @default("low") @db.VarChar(10)
+  x         Int
+  y         Int
+  logoUrl   String?  @map("logo_url") @db.VarChar(255)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  seats     Seat[]
+
+  @@map("cafes")
+}
+
+model Seat {
+  id        Int      @id @default(autoincrement())
+  cafeId    Int      @map("cafe_id")
+  seatKey   String   @map("seat_key") @db.VarChar(20)
+  type      String   @db.VarChar(20)
+  plugged   Boolean  @default(false)
+  occupied  Boolean  @default(false)
+  label     String?  @db.VarChar(50)
+  floor     Int      @default(1)
+  shape     String?  @db.VarChar(20)
+  span      Int      @default(1)
+  sortOrder Int      @map("sort_order")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  cafe      Cafe     @relation(fields: [cafeId], references: [id], onDelete: Cascade)
+
+  @@unique([cafeId, seatKey, floor], name: "unique_cafe_seat_floor")
+  @@map("seats")
+}

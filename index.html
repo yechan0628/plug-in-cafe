@@ -128,6 +128,48 @@
         </main>
     </div>
 
+    <!-- AI Cafe Recommendation Assistant Chatbot -->
+    <div class="ai-chatbot-container">
+        <!-- Floating Action Button (FAB) -->
+        <button class="ai-chatbot-fab" id="ai-chat-toggle" onclick="toggleAiChat()">
+            <span class="material-symbols-outlined fab-icon">smart_toy</span>
+            <span class="fab-badge">AI 추천</span>
+        </button>
+
+        <!-- Chat Window Card -->
+        <div class="ai-chat-card" id="ai-chat-card">
+            <div class="chat-header">
+                <div class="chat-title-container">
+                    <span class="material-symbols-outlined chat-logo">smart_toy</span>
+                    <div>
+                        <h3 class="chat-title">Plug-In AI 비서</h3>
+                        <p class="chat-subtitle">실시간 콘센트 카페 맞춤 추천</p>
+                    </div>
+                </div>
+                <button class="close-chat-btn" onclick="toggleAiChat()">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            
+            <!-- Message List -->
+            <div class="chat-messages" id="chat-messages">
+                <div class="message ai-message">
+                    안녕하세요! 플러그인 카페 AI 비서입니다. 🔌🤖<br>
+                    실시간 데이터베이스를 바탕으로 신촌 인근의 작업하기 좋은 카페를 추천해 드릴게요.<br>
+                    예시: <i>"콘센트 자리가 제일 많은 곳은 어디야?", "주차장 있고 한적한 카페 있어?"</i>
+                </div>
+            </div>
+            
+            <!-- Input Form -->
+            <div class="chat-input-form">
+                <input type="text" id="chat-input" placeholder="AI에게 질문해 보세요..." onkeydown="if(event.key==='Enter') sendChatMessage()">
+                <button class="send-message-btn" onclick="sendChatMessage()">
+                    <span class="material-symbols-outlined">send</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- JS Link -->
     <script src="app.js"></script>
 </body>
