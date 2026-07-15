@@ -257,6 +257,18 @@ ${couponsList}
             } else if (query.includes("한적") || query.includes("조용")) {
                 const quietCafes = currentCafes.filter(c => c.congestion === 'low');
                 replyText = `🍃 현재 매장이 한적하고 조용한 편인 카페는 **${quietCafes.map(c => c.name).join(', ')}** 입니다. 쾌적한 작업 공간이 필요하시다면 해당 매장을 추천드립니다.`;
+            } else if (query.includes("시간") || query.includes("영업") || query.includes("언제") || query.includes("몇 시")) {
+                const matchedCafe = currentCafes.find(c => {
+                    const cleanName = c.name.replace(/\s+/g, "").toLowerCase();
+                    const cleanQuery = query.replace(/\s+/g, "").toLowerCase();
+                    return cleanQuery.includes(cleanName) || cleanName.split("커피").some(w => w.length > 1 && cleanQuery.includes(w)) || cleanName.split("점").some(w => w.length > 1 && cleanQuery.includes(w));
+                });
+                if (matchedCafe) {
+                    replyText = `⏰ **${matchedCafe.name}**의 영업시간은 **${matchedCafe.hours}** 입니다. 편하신 시간에 방문해 보세요!`;
+                } else {
+                    const hoursList = currentCafes.slice(0, 4).map(c => `- **${c.name}**: ${c.hours}`).join("\n");
+                    replyText = `⏰ 주요 신촌 카페 영업시간 안내입니다:\n${hoursList}\n\n궁금하신 카페 이름과 함께 질문해 주시면 정확한 시간을 안내해 드릴게요!`;
+                }
             } else {
                 const sortedByPlugs = [...currentCafes].sort((a,b) => {
                     const aFree = a.seats.filter(s => s.type === 'seat' && s.plugged && !s.occupied).length;

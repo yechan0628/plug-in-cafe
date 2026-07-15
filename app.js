@@ -1014,3 +1014,12 @@ function showToast(message) {
         toast.style.transform = "translateX(-50%) translateY(0)";
     }, 2800);
 }
+
+// Quick suggestion chip trigger handler
+async function handleSuggestionClick(text) {
+    const input = document.getElementById("chat-input");
+    if (input) {
+        input.value = text;
+        await sendChatMessage();
+    }
+}

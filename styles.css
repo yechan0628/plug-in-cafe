@@ -1166,3 +1166,34 @@ body {
 .points-updated {
     animation: pointsPulse 0.6s ease;
 }
+
+/* Suggestion Chips styling */
+.chat-suggestions {
+    display: flex;
+    gap: 6px;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.55);
+    border-top: 1px solid rgba(78, 52, 46, 0.05);
+    flex-wrap: wrap;
+}
+
+.suggestion-chip {
+    background: #FFF;
+    border: 1px solid rgba(78, 52, 46, 0.15);
+    border-radius: 20px;
+    padding: 5px 10px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #4E342E;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.01);
+}
+
+.suggestion-chip:hover {
+    background: #4E342E;
+    color: #FFF;
+    border-color: #4E342E;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(78, 52, 46, 0.18);
+}

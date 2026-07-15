@@ -186,6 +186,13 @@
                 </div>
             </div>
             
+            <!-- Quick Suggestion Chips -->
+            <div class="chat-suggestions">
+                <button class="suggestion-chip" onclick="handleSuggestionClick('신촌역 인근 카페들의 영업시간을 알려줘')">⏰ 영업시간 안내</button>
+                <button class="suggestion-chip" onclick="handleSuggestionClick('주차장 있고 한적한 카페 추천해줘')">🚗 무료 주차 & 한적함</button>
+                <button class="suggestion-chip" onclick="handleSuggestionClick('사용 가능한 쿠폰 발급해줘')">🎟️ 쿠폰 발급받기</button>
+            </div>
+            
             <!-- Input Form -->
             <div class="chat-input-form">
                 <input type="text" id="chat-input" placeholder="AI에게 질문해 보세요..." onkeydown="if(event.key==='Enter') sendChatMessage()">
