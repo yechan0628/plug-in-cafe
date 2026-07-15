@@ -32,6 +32,21 @@ async function init() {
     await loadUserRewards();
     createSvgPatterns();
     setupEventListeners();
+    
+    // Check if there is a deep link for a specific cafe
+    const urlParams = new URLSearchParams(window.location.search);
+    const cafeIdParam = urlParams.get('cafe');
+    if (cafeIdParam) {
+        const targetId = parseInt(cafeIdParam, 10);
+        const targetCafe = cafes.find(c => c.id === targetId);
+        if (targetCafe) {
+            selectCafe(targetCafe);
+            // Center map on the cafe pin
+            viewX = targetCafe.x - (viewWidth * zoom) / 2;
+            viewY = targetCafe.y - (viewHeight * zoom) / 2;
+            mapSvg.setAttribute("viewBox", `${viewX} ${viewY} ${viewWidth * zoom} ${viewHeight * zoom}`);
+        }
+    }
 }
 
 // Load points and coupons from backend
@@ -501,6 +516,11 @@ function renderBottomSheet(cafe) {
                 <p class="total-stats-summary" style="font-size: 13px; font-weight: 700; color: var(--color-secondary); margin-top: 8px;">🪑 전체 일반 좌석: 총 ${stats.totalSeats}석 중 현재 ${stats.freeSeatsCount}석 비어있음</p>
                 <span style="font-size: 11px; color: var(--color-secondary); display: block; margin-top: 6px;">* 좌석 배치도의 좌석을 직접 터치해 가상 점유 상태를 토글할 수 있습니다.</span>
             </div>
+            
+            <button class="share-btn" onclick="shareCafeSeatStatus(${cafe.id})">
+                <span class="material-symbols-outlined">share</span>
+                <span>실시간 좌석현황 공유하기</span>
+            </button>
         </div>
         
         <div class="sheet-right">
@@ -948,4 +968,39 @@ async function handleSuggestionClick(text) {
         input.value = text;
         await sendChatMessage();
     }
+}
+
+// Share cafe seat status URL copier
+function shareCafeSeatStatus(cafeId) {
+    const cafe = cafes.find(c => c.id === cafeId);
+    if (!cafe) return;
+
+    const stats = getCafeStats(cafe);
+    const shareUrl = `${window.location.origin}${window.location.pathname}?cafe=${cafe.id}`;
+    
+    const textToCopy = `🔌 [Plug-In Cafe] ${cafe.name} 실시간 좌석 현황 공유
+📍 주소: ${cafe.address}
+⚡ 콘센트 석: 총 ${stats.totalPlugCount}석 중 ${stats.freePlugCount}석 이용 가능!
+🪑 전체 좌석: 총 ${stats.totalSeats}석 중 ${stats.freeSeatsCount}석 이용 가능!
+
+👉 실시간 도면 확인하기: ${shareUrl}`;
+
+    navigator.clipboard.writeText(textToCopy).then(() => {
+        showToast("실시간 좌석현황이 클립보드에 복사되었습니다! 📋");
+    }).catch(err => {
+        console.error("Failed to copy text: ", err);
+        // Fallback for older or restricted web environments
+        const textarea = document.createElement("textarea");
+        textarea.value = textToCopy;
+        textarea.style.position = "fixed";
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+            document.execCommand("copy");
+            showToast("실시간 좌석현황이 복사되었습니다! 📋");
+        } catch (e) {
+            alert("복사에 실패했습니다. 수동으로 주소를 복사해 주세요.");
+        }
+        document.body.removeChild(textarea);
+    });
 }

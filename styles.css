@@ -1202,3 +1202,33 @@ body {
     transform: translateY(-1px);
     box-shadow: 0 3px 8px rgba(78, 52, 46, 0.18);
 }
+
+/* Share Button Premium Styling */
+.share-btn {
+    width: 100%;
+    margin-top: var(--spacing-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px;
+    font-size: 13px;
+    font-weight: 700;
+    background: var(--color-primary);
+    color: #FFF;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(78, 52, 46, 0.12);
+}
+
+.share-btn:hover {
+    background: #3E2723;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(78, 52, 46, 0.2);
+}
+
+.share-btn:active {
+    transform: translateY(0);
+}
