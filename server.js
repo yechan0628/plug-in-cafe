@@ -182,7 +182,7 @@ app.post('/api/user/claim-coupon', async (req, res) => {
 // 5. AI Cafe Recommendation Assistant Chatbot API (Gemini LLM with Rewards Integration)
 app.post('/api/ai/chat', async (req, res) => {
     try {
-        const { message } = req.body;
+        const { message, history } = req.body;
         
         if (!message) {
             return res.status(400).json({ error: "Message is required." });
@@ -233,6 +233,7 @@ ${couponsList}
 3. 사용자가 쿠폰을 새로 발급해 달라고 요청하는 경우(예: "쿠폰 줘", "쿠폰 발급해줘"), 답변 말미에 대괄호를 사용하여 정확히 \`[ISSUE_COUPON: <쿠폰 이름>]\` 형태로 기재하세요. 쿠폰 이름은 실속 있는 카페 혜택으로 자유롭게 지어주십시오.
    예: "요청하신 쿠폰을 발급해 드렸습니다! [ISSUE_COUPON: 신촌 카페 연동 아메리카노 무료 쿠폰 ☕]"
 4. 답변은 불필요하게 길지 않고, 친절한 말투(존댓말)로 2~3줄 내외 혹은 깔끔한 글머리 기호(Bullet points) 형식으로 간결하게 작성하세요.
+5. 대화의 맥락(Context)을 기억하고 있으므로 사용자가 이전 질문에 빗대어 대화를 이어가면 (예: "거기는 영업시간이 어떻게 돼?", "주차가 무료야?") 이전 대화 상의 지점을 기준으로 유연하게 답변하세요.
 `;
 
         const geminiApiKey = process.env.GEMINI_API_KEY;
@@ -265,14 +266,23 @@ ${couponsList}
                 replyText = `🔌 안녕하세요! 현재 신촌역 인근에서 콘센트 여유 자리가 가장 많은 매장은 **${sortedByPlugs[0].name}** 입니다. 작업하기 좋은 최적의 환경을 원하신다면 해당 매장의 도면을 클릭해 상세 좌석을 확인해보세요!`;
             }
         } else {
-            // Call Real Gemini API using GoogleGenAI
+            // Call Real Gemini API using GoogleGenAI with multi-turn chat support
             const ai = new GoogleGenAI({ apiKey: geminiApiKey });
             const model = ai.getGenerativeModel({ model: "gemini-2.5-flash" });
             
-            const result = await model.generateContent([
-                { text: systemPrompt },
-                { text: `사용자 질문: ${message}` }
-            ]);
+            // Format history for Gemini API: [{ role: 'user'|'model', parts: [{ text: '...' }] }]
+            // Exclude the last user message which is passed to sendMessage()
+            const historyData = (history || []).slice(0, -1).map(h => ({
+                role: h.role,
+                parts: [{ text: h.parts[0].text }]
+            }));
+
+            const chat = model.startChat({
+                history: historyData,
+                systemInstruction: systemPrompt
+            });
+            
+            const result = await chat.sendMessage(message);
             replyText = result.response.text();
         }
 

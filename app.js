@@ -864,6 +864,13 @@ function triggerRandomSimulation() {
 window.onload = init;
 
 // AI Chatbot Client Side Interactivity
+let chatHistory = [
+    {
+        role: "model",
+        parts: [{ text: `안녕하세요! 플러그인 카페 AI 비서입니다. 🔌🤖\n실시간 데이터베이스를 바탕으로 신촌 인근의 작업하기 좋은 카페를 추천해 드릴게요.\n예시: "콘센트 자리가 제일 많은 곳은 어디야?", "주차장 있고 한적한 카페 있어?"` }]
+    }
+];
+
 function toggleAiChat() {
     const chatCard = document.getElementById("ai-chat-card");
     if (chatCard) {
@@ -882,6 +889,12 @@ async function sendChatMessage() {
     // Append User Message Bubble
     appendMessageBubble("user", userMessageText);
     
+    // Track conversation history
+    chatHistory.push({
+        role: "user",
+        parts: [{ text: userMessageText }]
+    });
+    
     // Add Typing Indicator Spinner
     const spinner = document.createElement("div");
     spinner.id = "chat-typing-indicator";
@@ -898,7 +911,10 @@ async function sendChatMessage() {
         const res = await fetch("/api/ai/chat", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ message: userMessageText })
+            body: JSON.stringify({ 
+                message: userMessageText,
+                history: chatHistory
+            })
         });
         const data = await res.json();
         
@@ -908,6 +924,12 @@ async function sendChatMessage() {
 
         if (data.reply) {
             appendMessageBubble("bot", data.reply);
+            
+            // Track model response in history
+            chatHistory.push({
+                role: "model",
+                parts: [{ text: data.reply }]
+            });
             
             // Update rewards if coupon was issued or points changed
             if (data.couponIssued) {
