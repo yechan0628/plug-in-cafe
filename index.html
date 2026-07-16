@@ -71,47 +71,75 @@
         <!-- Right Content Area: Map & Sheet -->
         <main class="map-container">
             <svg id="map-svg" viewBox="0 0 1000 700" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <clipPath id="pin-circle-clip">
-                        <circle cx="0" cy="-20" r="10.5" />
-                    </clipPath>
-                </defs>
-                <!-- Background Block -->
-                <rect width="1000" height="700" fill="#EFEBE9" />
+                <!-- Background Block (Soft Sand grey-cream) -->
+                <rect width="1000" height="700" fill="#F4F3F0" />
                 
-                <!-- River or Green Park representation -->
-                <path d="M 0,0 L 0,150 Q 200,100 400,200 T 800,50 Q 900,0 1000,50 L 1000,0 Z" fill="#D7CCC8" opacity="0.4" />
-                <rect x="50" y="50" width="120" height="80" rx="10" fill="#C8E6C9" opacity="0.5" /> <!-- Green Park -->
-                <text x="110" y="95" text-anchor="middle" fill="#2E7D32" font-size="12" font-weight="600">센트럴 파크</text>
+                <!-- River (Scenic blue-grey stream) -->
+                <path d="M -50 150 Q 200 200 450 120 T 900 80 T 1050 40" fill="none" stroke="#E2E7ED" stroke-width="36" />
+                <text x="600" y="70" fill="#A8B7C7" font-size="10" font-weight="700" font-family="sans-serif" letter-spacing="0.1em">홍제천 홍수조절소류</text>
                 
-                <!-- Streets & Blocks -->
-                <!-- Horizontal Street 1 -->
-                <rect x="0" y="240" width="1000" height="50" fill="#D7CCC8" opacity="0.6" />
-                <!-- Horizontal Street 2 -->
-                <rect x="0" y="500" width="1000" height="60" fill="#D7CCC8" opacity="0.6" />
-                <!-- Vertical Street 1 -->
-                <rect x="360" y="0" width="60" height="700" fill="#D7CCC8" opacity="0.6" />
-                <!-- Vertical Street 2 -->
-                <rect x="800" y="0" width="50" height="700" fill="#D7CCC8" opacity="0.6" />
+                <!-- Urban Blocks (Subtle off-white background block borders) -->
+                <!-- Block 1 (Top Left) -->
+                <rect x="30" y="50" width="290" height="140" rx="12" fill="#FAF9F6" stroke="#E6E3DD" stroke-width="1.5" />
+                <!-- Block 2 (Mid Left) -->
+                <rect x="30" y="290" width="290" height="160" rx="12" fill="#FAF9F6" stroke="#E6E3DD" stroke-width="1.5" />
+                <!-- Block 3 (Bottom Left) -->
+                <rect x="30" y="550" width="290" height="120" rx="12" fill="#FAF9F6" stroke="#E6E3DD" stroke-width="1.5" />
                 
-                <!-- Sub Street Grid Lines -->
-                <line x1="0" y1="265" x2="1000" y2="265" stroke="#FFFFFF" stroke-dasharray="10 10" stroke-width="2" opacity="0.8" />
-                <line x1="0" y1="530" x2="1000" y2="530" stroke="#FFFFFF" stroke-dasharray="10 10" stroke-width="2" opacity="0.8" />
-                <line x1="390" y1="0" x2="390" y2="700" stroke="#FFFFFF" stroke-dasharray="10 10" stroke-width="2" opacity="0.8" />
-                <line x1="825" y1="0" x2="825" y2="700" stroke="#FFFFFF" stroke-dasharray="10 10" stroke-width="2" opacity="0.8" />
+                <!-- Block 4 (Top Center) -->
+                <rect x="420" y="50" width="320" height="140" rx="12" fill="#FAF9F6" stroke="#E6E3DD" stroke-width="1.5" />
+                <!-- Block 5 (Mid Center) -->
+                <rect x="420" y="290" width="320" height="160" rx="12" fill="#FAF9F6" stroke="#E6E3DD" stroke-width="1.5" />
+                <!-- Block 6 (Bottom Center) -->
+                <rect x="420" y="550" width="320" height="120" rx="12" fill="#FAF9F6" stroke="#E6E3DD" stroke-width="1.5" />
+                
+                <!-- Block 7 (Right Strip) -->
+                <rect x="850" y="50" width="120" height="400" rx="12" fill="#FAF9F6" stroke="#E6E3DD" stroke-width="1.5" />
 
-                <!-- Map Buildings -->
-                <rect x="100" y="320" width="180" height="100" rx="8" fill="#FFF" opacity="0.7" />
-                <text x="190" y="375" text-anchor="middle" fill="#8D6E63" font-size="11" font-weight="500">아트 오피스 빌딩</text>
+                <!-- Green Parks (Soft sage green) -->
+                <!-- Park 1 (Top Left in Block 1) -->
+                <rect x="45" y="65" width="110" height="110" rx="10" fill="#E2EADF" />
+                <text x="100" y="125" text-anchor="middle" fill="#7B8B7A" font-size="10" font-weight="700">창천근린공원</text>
                 
-                <rect x="580" y="320" width="150" height="120" rx="8" fill="#FFF" opacity="0.7" />
-                <text x="655" y="385" text-anchor="middle" fill="#8D6E63" font-size="11" font-weight="500">시네마 센터</text>
+                <!-- Park 2 (Bottom Right) -->
+                <rect x="850" y="520" width="120" height="150" rx="10" fill="#E2EADF" />
+                <text x="910" y="600" text-anchor="middle" fill="#7B8B7A" font-size="10" font-weight="700">신촌 바람산 공원</text>
+
+                <!-- Streets / Roads (Clean solid white lanes) -->
+                <!-- Horizontal Main Street (Sinchon-ro) -->
+                <rect x="0" y="210" width="1000" height="60" fill="#FFFFFF" stroke="#E2DFD9" stroke-width="1" />
+                <text x="180" y="245" fill="#BCAAA4" font-size="10" font-weight="700" letter-spacing="0.1em">신촌로 (Sinchon-ro)</text>
                 
-                <rect x="550" y="70" width="200" height="90" rx="8" fill="#FFF" opacity="0.7" />
-                <text x="650" y="120" text-anchor="middle" fill="#8D6E63" font-size="11" font-weight="500">리버 쇼핑 몰</text>
+                <!-- Horizontal Lower Street (Sinchon-ro 2) -->
+                <rect x="0" y="470" width="1000" height="60" fill="#FFFFFF" stroke="#E2DFD9" stroke-width="1" />
+                
+                <!-- Vertical Main Street (Yonsei-ro) -->
+                <rect x="340" y="0" width="60" height="700" fill="#FFFFFF" stroke="#E2DFD9" stroke-width="1" />
+                <text x="373" y="380" fill="#BCAAA4" font-size="10" font-weight="700" letter-spacing="0.1em" transform="rotate(90, 373, 380)">연세로 (Yonsei-ro)</text>
+                
+                <!-- Vertical Right Street (Sinchon-역길) -->
+                <rect x="760" y="0" width="70" height="700" fill="#FFFFFF" stroke="#E2DFD9" stroke-width="1" />
+                
+                <!-- Intersections center marks -->
+                <circle cx="370" cy="240" r="4" fill="#FAF9F6" />
+                <circle cx="370" cy="500" r="4" fill="#FAF9F6" />
+                <circle cx="795" cy="240" r="4" fill="#FAF9F6" />
+                <circle cx="795" cy="500" r="4" fill="#FAF9F6" />
+
+                <!-- Map Buildings Detail Labels -->
+                <text x="210" y="375" text-anchor="middle" fill="#8D6E63" font-size="10" font-weight="700" opacity="0.6">신촌현대백화점</text>
+                <text x="580" y="375" text-anchor="middle" fill="#8D6E63" font-size="10" font-weight="700" opacity="0.6">신촌 세브란스 빌딩</text>
+                <text x="610" y="125" text-anchor="middle" fill="#8D6E63" font-size="10" font-weight="700" opacity="0.6">연세대학교 백양관</text>
                 
                 <!-- Pins are rendered in app.js -->
             </svg>
+            
+            <!-- Floating Map Controls -->
+            <div class="map-controls">
+                <button class="map-control-btn" onclick="recenterMap()" title="지도 재중심정렬">
+                    <span class="material-symbols-outlined">my_location</span>
+                </button>
+            </div>
 
 
 

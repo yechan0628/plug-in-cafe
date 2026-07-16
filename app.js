@@ -295,56 +295,104 @@ function renderMap() {
     cafes.forEach(cafe => {
         const stats = getCafeStats(cafe);
         const hasFreePlug = stats.freePlugCount > 0;
+        const isActive = selectedCafe?.id === cafe.id;
         
         // Create marker group
         const marker = document.createElementNS("http://www.w3.org/2000/svg", "g");
-        marker.setAttribute("class", `map-marker ${hasFreePlug ? "" : "busy"} ${selectedCafe?.id === cafe.id ? "active" : ""}`);
+        marker.setAttribute("class", `map-marker ${hasFreePlug ? "" : "busy"} ${isActive ? "active" : ""}`);
         marker.setAttribute("id", `marker-${cafe.id}`);
         marker.setAttribute("transform", `translate(${cafe.x}, ${cafe.y})`);
+        marker.setAttribute("style", "cursor: pointer;");
         
-        // Glow effect
-        const glow = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-        glow.setAttribute("class", "pin-glow");
-        glow.setAttribute("r", "25");
-        glow.setAttribute("cx", "0");
-        glow.setAttribute("cy", "-15");
-        
-        // Pin body (Classic coffee-cup pin or modern droplet pin)
-        const pinBody = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        pinBody.setAttribute("class", "pin-body");
-        pinBody.setAttribute("d", "M0 -35 C-12 -35 -15 -25 -15 -15 C-15 -5 0 0 0 0 C0 0 15 -5 15 -15 C15 -25 12 -35 0 -35 Z");
-        
-        // White background circle to make logo background white
-        const bgCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-        bgCircle.setAttribute("cx", "0");
-        bgCircle.setAttribute("cy", "-20");
-        bgCircle.setAttribute("r", "13");
-        bgCircle.setAttribute("fill", "#FFFFFF");
-        
-        // Logo Circle filled with Pattern
-        const logoCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-        logoCircle.setAttribute("cx", "0");
-        logoCircle.setAttribute("cy", "-20");
-        logoCircle.setAttribute("r", "13");
-        logoCircle.setAttribute("fill", `url(#logo-pattern-${cafe.id})`);
-        
-        // Text label
-        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-        text.textContent = cafe.name;
-        text.setAttribute("y", "18");
-        text.setAttribute("text-anchor", "middle");
-        text.setAttribute("fill", "#3E2723");
-        text.setAttribute("font-size", "11px");
-        text.setAttribute("font-weight", "800");
-        
-        marker.appendChild(glow);
-        marker.appendChild(pinBody);
-        marker.appendChild(bgCircle);
-        marker.appendChild(logoCircle);
-        marker.appendChild(text);
+        if (isActive) {
+            // Selected Pin shape (Droplet/Circle marker style from imgi_83/102)
+            // Outer glow circle
+            const glow = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            glow.setAttribute("r", "22");
+            glow.setAttribute("fill", "rgba(91, 91, 91, 0.12)");
+            glow.setAttribute("cy", "-15");
+            glow.setAttribute("cx", "0");
+            
+            // White circular background with dark border
+            const pinBg = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            pinBg.setAttribute("r", "14");
+            pinBg.setAttribute("fill", "#FFFFFF");
+            pinBg.setAttribute("stroke", "#5B5B5B");
+            pinBg.setAttribute("stroke-width", "3.5");
+            pinBg.setAttribute("cy", "-15");
+            pinBg.setAttribute("cx", "0");
+            
+            // Icon (Star/Location pin icon)
+            const pinIcon = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            pinIcon.textContent = "★";
+            pinIcon.setAttribute("y", "-10");
+            pinIcon.setAttribute("x", "0");
+            pinIcon.setAttribute("text-anchor", "middle");
+            pinIcon.setAttribute("fill", "#5B5B5B");
+            pinIcon.setAttribute("font-size", "13px");
+            pinIcon.setAttribute("font-weight", "900");
+            
+            // Rounded label card underneath
+            const labelBg = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            const textLen = cafe.name.length;
+            const labelWidth = textLen * 10 + 20;
+            labelBg.setAttribute("x", `${-labelWidth / 2}`);
+            labelBg.setAttribute("y", "8");
+            labelBg.setAttribute("width", `${labelWidth}`);
+            labelBg.setAttribute("height", "22");
+            labelBg.setAttribute("rx", "11");
+            labelBg.setAttribute("fill", "#5B5B5B");
+            
+            const labelText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            labelText.textContent = cafe.name;
+            labelText.setAttribute("y", "22");
+            labelText.setAttribute("x", "0");
+            labelText.setAttribute("text-anchor", "middle");
+            labelText.setAttribute("fill", "#FCFFFE");
+            labelText.setAttribute("font-size", "9.5px");
+            labelText.setAttribute("font-weight", "700");
+            
+            marker.appendChild(glow);
+            marker.appendChild(pinBg);
+            marker.appendChild(pinIcon);
+            marker.appendChild(labelBg);
+            marker.appendChild(labelText);
+        } else {
+            // Inactive Pin shape (Smaller, subtle dot pin from imgi_102)
+            const pinBg = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            pinBg.setAttribute("r", "8");
+            pinBg.setAttribute("fill", "#FFFFFF");
+            pinBg.setAttribute("stroke", hasFreePlug ? "#D6E2D8" : "#E4DFDA");
+            pinBg.setAttribute("stroke-width", "2");
+            pinBg.setAttribute("cy", "-10");
+            pinBg.setAttribute("cx", "0");
+            
+            const pinDot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            pinDot.setAttribute("r", "3.5");
+            pinDot.setAttribute("fill", hasFreePlug ? "#5B5B5B" : "#BCAAA4");
+            pinDot.setAttribute("cy", "-10");
+            pinDot.setAttribute("cx", "0");
+            
+            // Simple text label without rect
+            const labelText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            labelText.textContent = cafe.name;
+            labelText.setAttribute("y", "14");
+            labelText.setAttribute("x", "0");
+            labelText.setAttribute("text-anchor", "middle");
+            labelText.setAttribute("fill", "#928E88");
+            labelText.setAttribute("font-size", "9px");
+            labelText.setAttribute("font-weight", "600");
+            
+            marker.appendChild(pinBg);
+            marker.appendChild(pinDot);
+            marker.appendChild(labelText);
+        }
         
         // Event Listener
-        marker.addEventListener("click", () => selectCafe(cafe.id));
+        marker.addEventListener("click", (e) => {
+            e.stopPropagation();
+            selectCafe(cafe.id);
+        });
         mapSvg.appendChild(marker);
     });
 }
@@ -1334,4 +1382,19 @@ function copyText(text) {
 
 function suggestEditInfo(cafeName) {
     showToast(`📝 ${cafeName}의 정보 수정 제안이 접수되었습니다!`);
+}
+
+function recenterMap() {
+    if (selectedCafe) {
+        viewX = selectedCafe.x - (viewWidth * zoom) / 2;
+        viewY = selectedCafe.y - (viewHeight * zoom) / 2;
+        mapSvg.setAttribute("viewBox", `${viewX} ${viewY} ${viewWidth * zoom} ${viewHeight * zoom}`);
+        showToast(`📍 ${selectedCafe.name} 위치로 지도를 재정렬했습니다.`);
+    } else {
+        viewX = 0;
+        viewY = 0;
+        zoom = 1.0;
+        mapSvg.setAttribute("viewBox", `0 0 1000 700`);
+        showToast("🗺️ 전체 지도를 홈 위치로 재정렬했습니다.");
+    }
 }
