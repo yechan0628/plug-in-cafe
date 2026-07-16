@@ -107,6 +107,11 @@ async function loadUserRewards() {
                 }).join('');
             }
         }
+        
+        // Check onboarding completion
+        if (data.user && (!data.user.username || !data.user.name)) {
+            document.getElementById("onboarding-overlay").style.display = "flex";
+        }
     } catch (err) {
         console.error("Failed to load user rewards:", err);
     }
@@ -454,6 +459,11 @@ function selectCafe(id) {
 
 // Render Bottom Sheet Content
 function renderBottomSheet(cafe) {
+    // 1. Update general metadata in header
+    document.getElementById("sheet-cafe-name").innerText = cafe.name;
+    document.getElementById("sheet-cafe-rating").innerText = cafe.rating;
+    document.getElementById("sheet-cafe-distance").innerText = cafe.distance;
+
     const stats = getCafeStats(cafe);
     
     let congestionText = "여유로움 (공부/작업 추천)";
@@ -493,24 +503,11 @@ function renderBottomSheet(cafe) {
         `;
     }
 
-    const sheetContent = document.getElementById("sheet-content");
-    sheetContent.innerHTML = `
+    // Populate Tab 1: Seats & Floor Plan
+    const tabSeats = document.getElementById("tab-content-seats");
+    tabSeats.innerHTML = `
         <div class="sheet-left">
-            <h2 style="font-size: 24px; font-weight: 800; color: var(--color-primary);">${cafe.name}</h2>
-            <div style="display: flex; gap: 8px; align-items: center; font-size: 14px; font-weight: 700;">
-                <span class="material-symbols-outlined star-icon">star</span>
-                <span>${cafe.rating}</span>
-                <span style="color: var(--color-secondary); font-weight: 400; margin-left: 8px;">${cafe.distance}</span>
-            </div>
-            
-            <div style="display: flex; flex-direction: column; gap: var(--spacing-sm); margin-top: var(--spacing-xs); font-size: 14px; color: var(--color-primary-light);">
-                <p><span class="material-symbols-outlined" style="font-size: 18px; margin-right: 8px; vertical-align: bottom;">location_on</span>${cafe.address}</p>
-                <p><span class="material-symbols-outlined" style="font-size: 18px; margin-right: 8px; vertical-align: bottom;">schedule</span>영업시간: ${cafe.hours}</p>
-                <p><span class="material-symbols-outlined" style="font-size: 18px; margin-right: 8px; vertical-align: bottom;">local_parking</span>주차장: ${cafe.parking ? '있음 (무료 주차 2시간)' : '없음 (인근 공영주차장 이용)'}</p>
-                <p><span class="material-symbols-outlined" style="font-size: 18px; margin-right: 8px; vertical-align: bottom;">group</span>실시간 혼잡도: <span class="congestion-badge ${congestionClass}" style="margin-left: 4px;">${congestionText}</span></p>
-            </div>
-            
-            <div style="background-color: var(--color-bg-base); padding: var(--spacing-md); border-radius: var(--radius-sm); border: 1px solid var(--color-border); margin-top: var(--spacing-sm);">
+            <div style="background-color: var(--color-bg-base); padding: var(--spacing-md); border-radius: var(--radius-sm); border: 1px solid var(--color-border); margin-top: var(--spacing-xs);">
                 <h4 style="font-size: 13px; font-weight: 800; margin-bottom: 6px;">실시간 콘센트 및 좌석 요약</h4>
                 <p class="plug-stats-summary" style="font-size: 14px; font-weight: 700; color: var(--color-status-free); margin-bottom: 0;">🔌 콘센트 좌석: 총 ${stats.totalPlugCount}석 중 현재 ${stats.freePlugCount}석 비어있음</p>
                 <p class="total-stats-summary" style="font-size: 13px; font-weight: 700; color: var(--color-secondary); margin-top: 8px;">🪑 전체 일반 좌석: 총 ${stats.totalSeats}석 중 현재 ${stats.freeSeatsCount}석 비어있음</p>
@@ -523,20 +520,75 @@ function renderBottomSheet(cafe) {
             </button>
         </div>
         
-        <div class="sheet-right">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-sm); flex-wrap: wrap; gap: 8px;">
-                <div class="floor-plan-title" style="margin: 0; display: flex; align-items: center; gap: 6px;">
-                    <span class="material-symbols-outlined">chair</span>
-                    <span>실시간 좌석 배치도 (Floor Plan)</span>
-                </div>
-            </div>
-            <div class="floor-plan-legend" style="margin-bottom: var(--spacing-md);">
+        <div class="sheet-right" style="flex: 1;">
+            <div class="floor-plan-legend" style="margin-bottom: var(--spacing-md); display: flex; gap: 12px; justify-content: flex-end;">
                 <div class="legend-item"><div class="legend-color free"></div><span>이용 가능</span></div>
                 <div class="legend-item"><div class="legend-color busy"></div><span>사용 중</span></div>
                 <div class="legend-item"><div class="legend-color no-plug"></div><span>콘센트 없음</span></div>
             </div>
-            
             ${floorPlansHtml}
+        </div>
+    `;
+
+    // Populate Tab 2: Detailed Info
+    const tabInfo = document.getElementById("tab-content-info");
+    tabInfo.innerHTML = `
+        <div class="info-item">
+            <span class="material-symbols-outlined">location_on</span>
+            <div>
+                <strong>주소</strong>
+                <p style="margin: 4px 0 0 0;">${cafe.address} 
+                    <button class="info-copy-btn" onclick="copyText('${cafe.address}')">복사</button>
+                </p>
+            </div>
+        </div>
+        <div class="info-item" style="margin-top: 16px;">
+            <span class="material-symbols-outlined">schedule</span>
+            <div>
+                <strong>영업시간</strong>
+                <p style="margin: 4px 0 0 0; white-space: pre-line;">${cafe.hours ? cafe.hours : '매일 오전 08:30 ~ 오후 22:00'}</p>
+            </div>
+        </div>
+        <div class="info-item" style="margin-top: 16px;">
+            <span class="material-symbols-outlined">local_parking</span>
+            <div>
+                <strong>주차 시설</strong>
+                <p style="margin: 4px 0 0 0;">${cafe.parking ? '무료 주차 가능 (2시간 제공)' : '주차 불가 (인근 공영주차장 이용 권장)'}</p>
+            </div>
+        </div>
+        <div class="info-item" style="margin-top: 16px;">
+            <span class="material-symbols-outlined">call</span>
+            <div>
+                <strong>전화번호</strong>
+                <p style="margin: 4px 0 0 0;">02-${300 + cafe.id}-${1000 + cafe.id}</p>
+            </div>
+        </div>
+        <div class="info-item" style="margin-top: 16px;">
+            <span class="material-symbols-outlined">group</span>
+            <div>
+                <strong>실시간 혼잡도</strong>
+                <p style="margin: 4px 0 0 0;"><span class="congestion-badge ${congestionClass}">${congestionText}</span></p>
+            </div>
+        </div>
+        
+        <button class="suggest-edit-btn" onclick="suggestEditInfo('${cafe.name}')">
+            <span class="material-symbols-outlined">edit_note</span>
+            <span>정보 수정 제안</span>
+        </button>
+    `;
+
+    // Populate Tab 3: Daylog Reviews List container
+    const tabDaylog = document.getElementById("tab-content-daylog");
+    tabDaylog.innerHTML = `
+        <div class="daylog-header" style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 12px;">
+            <strong style="font-size: 14px;">방문자 데이로그</strong>
+            <button class="daylog-write-btn" onclick="openDaylogModal(${cafe.id})">
+                <span class="material-symbols-outlined">rate_review</span>
+                <span>데이로그 등록</span>
+            </button>
+        </div>
+        <div class="daylogs-feed" id="daylogs-feed-container-${cafe.id}">
+            <div class="no-daylogs">데이로그 로딩 중...</div>
         </div>
     `;
 
@@ -544,6 +596,9 @@ function renderBottomSheet(cafe) {
     if (hasSecondFloor) {
         renderFloorPlanGrid(cafe, 2, "floor-plan-grid-f2");
     }
+
+    // Default back to seats tab
+    switchSheetTab('seats');
 }
 
 // Render Floor Plan Grid
@@ -1003,4 +1058,280 @@ function shareCafeSeatStatus(cafeId) {
         }
         document.body.removeChild(textarea);
     });
+}
+
+// Onboarding State & Variables
+let onboardingData = {
+    avatarUrl: "",
+    username: "",
+    name: "",
+    regions: [],
+    curators: []
+};
+
+let currentOnboardingStep = 1;
+
+function nextOnboardingStep(stepNum) {
+    if (currentOnboardingStep === 1) {
+        const username = document.getElementById("ob-username").value.trim();
+        const name = document.getElementById("ob-name").value.trim();
+        if (!username || !name) {
+            alert("사용자 이름과 이름을 모두 입력해 주세요.");
+            return;
+        }
+        onboardingData.username = username;
+        onboardingData.name = name;
+    }
+    
+    // Hide all steps
+    for (let i = 1; i <= 4; i++) {
+        document.getElementById(`onboarding-step-${i}`).style.display = "none";
+        document.getElementById(`step-num-${i}`).classList.remove("active");
+        const line = document.getElementById(`step-line-${i}`);
+        if (line) line.classList.remove("active");
+    }
+    
+    // Show target step
+    document.getElementById(`onboarding-step-${stepNum}`).style.display = "block";
+    
+    // Update step indicator
+    for (let i = 1; i <= stepNum; i++) {
+        document.getElementById(`step-num-${i}`).classList.add("active");
+        const line = document.getElementById(`step-line-${i - 1}`);
+        if (line) line.classList.add("active");
+    }
+    
+    currentOnboardingStep = stepNum;
+}
+
+function prevOnboardingStep(stepNum) {
+    nextOnboardingStep(stepNum);
+}
+
+function toggleRegion(element, regionName) {
+    element.classList.toggle("active");
+    if (element.classList.contains("active")) {
+        if (!onboardingData.regions.includes(regionName)) {
+            onboardingData.regions.push(regionName);
+        }
+    } else {
+        onboardingData.regions = onboardingData.regions.filter(r => r !== regionName);
+    }
+}
+
+function toggleFollowCurator(button, curatorId) {
+    button.classList.toggle("following");
+    if (button.classList.contains("following")) {
+        button.innerText = "✓ 팔로잉";
+        if (!onboardingData.curators.includes(curatorId)) {
+            onboardingData.curators.push(curatorId);
+        }
+    } else {
+        button.innerText = "+ 팔로우";
+        onboardingData.curators = onboardingData.curators.filter(c => c !== curatorId);
+    }
+}
+
+function handleAvatarChange(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById("avatar-placeholder-icon").style.display = "none";
+            const img = document.getElementById("avatar-img");
+            img.src = e.target.result;
+            img.style.display = "block";
+            onboardingData.avatarUrl = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function closeOnboarding() {
+    document.getElementById("onboarding-overlay").style.display = "none";
+}
+
+async function finishOnboarding() {
+    try {
+        const response = await fetch('/api/user/profile', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                username: onboardingData.username,
+                name: onboardingData.name,
+                avatarUrl: onboardingData.avatarUrl,
+                regions: onboardingData.regions.join(','),
+                curators: onboardingData.curators.join(',')
+            })
+        });
+        
+        if (response.ok) {
+            closeOnboarding();
+            showToast("🎉 첫 설정 완료! 가입 축하금 +100포인트 적립!");
+            await loadUserRewards();
+        }
+    } catch (err) {
+        console.error("Error saving onboarding details:", err);
+    }
+}
+
+// Bottom Sheet Tab Switching
+let currentSheetTab = 'seats';
+
+function switchSheetTab(tabName) {
+    currentSheetTab = tabName;
+    
+    // Toggle active classes on tab buttons
+    document.getElementById("tab-seats").classList.remove("active");
+    document.getElementById("tab-info").classList.remove("active");
+    document.getElementById("tab-daylog").classList.remove("active");
+    
+    document.getElementById(`tab-${tabName}`).classList.add("active");
+    
+    // Toggle active content divs
+    document.getElementById("tab-content-seats").classList.remove("active");
+    document.getElementById("tab-content-info").classList.remove("active");
+    document.getElementById("tab-content-daylog").classList.remove("active");
+    
+    document.getElementById(`tab-content-${tabName}`).classList.add("active");
+    
+    if (tabName === 'daylog' && selectedCafe) {
+        loadCafeDaylogs(selectedCafe.id);
+    }
+}
+
+// Daylog Reviews Management
+let currentDaylogCafeId = null;
+let currentDaylogImage = null;
+
+async function loadCafeDaylogs(cafeId) {
+    const feed = document.getElementById(`daylogs-feed-container-${cafeId}`);
+    if (!feed) return;
+    
+    try {
+        const res = await fetch(`/api/cafes/${cafeId}/daylogs`);
+        const daylogs = await res.json();
+        
+        if (!daylogs || daylogs.length === 0) {
+            feed.innerHTML = `<div class="no-daylogs">아직 작성된 데이로그가 없습니다.<br>첫 데이로그를 등록하고 100포인트를 적립해보세요! ✍️</div>`;
+        } else {
+            feed.innerHTML = daylogs.map(dl => {
+                const dateText = new Date(dl.createdAt).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
+                const imgTag = dl.imageUrl ? `<img class="daylog-card-img" src="${dl.imageUrl}" alt="Daylog Image">` : "";
+                
+                return `
+                    <div class="daylog-card">
+                        <div class="daylog-card-header">
+                            <div class="daylog-user-icon">👤</div>
+                            <div class="daylog-user-name">방문자</div>
+                            <div class="daylog-date">${dateText} (방문일: ${dl.visitDate})</div>
+                        </div>
+                        <div class="daylog-card-content">
+                            ${escapeHtml(dl.content)}
+                            ${imgTag}
+                        </div>
+                    </div>
+                `;
+            }).join("");
+        }
+    } catch (err) {
+        console.error("Error loading daylogs:", err);
+        feed.innerHTML = `<div class="no-daylogs">데이로그를 불러오는 데 실패했습니다.</div>`;
+    }
+}
+
+function openDaylogModal(cafeId) {
+    currentDaylogCafeId = cafeId;
+    currentDaylogImage = null;
+    
+    // Clear inputs
+    document.getElementById("dl-content").value = "";
+    document.getElementById("dl-visit-date").value = new Date().toISOString().split('T')[0];
+    document.getElementById("dl-is-public").checked = true;
+    document.getElementById("dl-photo-preview-container").style.display = "none";
+    document.getElementById("dl-photo-preview").src = "";
+    
+    document.getElementById("daylog-modal-overlay").style.display = "flex";
+}
+
+function closeDaylogModal() {
+    document.getElementById("daylog-modal-overlay").style.display = "none";
+}
+
+function handleDaylogImageSelect(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const previewContainer = document.getElementById("dl-photo-preview-container");
+            const img = document.getElementById("dl-photo-preview");
+            img.src = e.target.result;
+            previewContainer.style.display = "block";
+            currentDaylogImage = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function removeDaylogPhoto() {
+    currentDaylogImage = null;
+    document.getElementById("dl-photo-preview-container").style.display = "none";
+    document.getElementById("dl-photo-preview").src = "";
+    document.getElementById("dl-image-input").value = "";
+}
+
+async function submitDaylog() {
+    const content = document.getElementById("dl-content").value.trim();
+    const visitDate = document.getElementById("dl-visit-date").value;
+    const isPublic = document.getElementById("dl-is-public").checked;
+    
+    if (!content) {
+        alert("데이로그 내용을 입력해 주세요.");
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/cafes/${currentDaylogCafeId}/daylogs`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                visitDate,
+                isPublic,
+                content,
+                imageUrl: currentDaylogImage
+            })
+        });
+        
+        if (response.ok) {
+            closeDaylogModal();
+            showToast("🎉 데이로그 등록 완료! 보너스 100포인트 적립! 🪙");
+            await loadUserRewards();
+            if (selectedCafe && selectedCafe.id === currentDaylogCafeId) {
+                await loadCafeDaylogs(currentDaylogCafeId);
+            }
+        }
+    } catch (err) {
+        console.error("Error submitting daylog:", err);
+    }
+}
+
+function escapeHtml(text) {
+    return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+function copyText(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        showToast("📋 주소가 클립보드에 복사되었습니다!");
+    }).catch(err => {
+        console.error("Copy failed:", err);
+    });
+}
+
+function suggestEditInfo(cafeName) {
+    showToast(`📝 ${cafeName}의 정보 수정 제안이 접수되었습니다!`);
 }

@@ -122,8 +122,31 @@
                     <span class="material-symbols-outlined">close</span>
                 </button>
                 
-                <div class="sheet-content" id="sheet-content">
-                    <!-- Javascript will populate screen details here -->
+                <div class="sheet-header-title">
+                    <h2 id="sheet-cafe-name">스타벅스 신촌역점</h2>
+                    <div class="sheet-cafe-meta">
+                        <span class="material-symbols-outlined star-icon">star</span>
+                        <span id="sheet-cafe-rating">4.5</span>
+                        <span id="sheet-cafe-distance">도보 5분</span>
+                    </div>
+                </div>
+                
+                <!-- Tab Bar -->
+                <div class="sheet-tabs">
+                    <button class="sheet-tab active" id="tab-seats" onclick="switchSheetTab('seats')">도면 & 현황</button>
+                    <button class="sheet-tab" id="tab-info" onclick="switchSheetTab('info')">상세 정보</button>
+                    <button class="sheet-tab" id="tab-daylog" onclick="switchSheetTab('daylog')">데이로그</button>
+                </div>
+                
+                <div class="sheet-content-container">
+                    <!-- Tab 1: Seats & Floor Plan -->
+                    <div class="sheet-tab-content active" id="tab-content-seats"></div>
+                    
+                    <!-- Tab 2: Detailed Info -->
+                    <div class="sheet-tab-content" id="tab-content-info"></div>
+                    
+                    <!-- Tab 3: Daylog Reviews -->
+                    <div class="sheet-tab-content" id="tab-content-daylog"></div>
                 </div>
             </div>
         </main>
@@ -173,6 +196,179 @@
                 <input type="text" id="chat-input" placeholder="AI에게 질문해 보세요..." onkeydown="if(event.key==='Enter') sendChatMessage()">
                 <button class="send-message-btn" onclick="sendChatMessage()">
                     <span class="material-symbols-outlined">send</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step-by-Step Onboarding Modal -->
+    <div class="onboarding-overlay" id="onboarding-overlay" style="display: none;">
+        <div class="onboarding-card">
+            <!-- Steps indicator -->
+            <div class="onboarding-steps">
+                <div class="step-num active" id="step-num-1">1</div>
+                <div class="step-line" id="step-line-1"></div>
+                <div class="step-num" id="step-num-2">2</div>
+                <div class="step-line" id="step-line-2"></div>
+                <div class="step-num" id="step-num-3">3</div>
+                <div class="step-line" id="step-line-3"></div>
+                <div class="step-num" id="step-num-4">4</div>
+            </div>
+            
+            <button class="skip-onboarding-btn" onclick="closeOnboarding()">건너뛰기</button>
+            
+            <!-- Step 1: Profile Settings -->
+            <div class="onboarding-step-content active" id="onboarding-step-1">
+                <h2 class="onboarding-title">프로필 설정</h2>
+                <div class="avatar-setup">
+                    <div class="avatar-circle" onclick="document.getElementById('avatar-input').click()">
+                        <span class="material-symbols-outlined avatar-placeholder" id="avatar-placeholder-icon">person</span>
+                        <img id="avatar-img" src="" alt="Avatar" style="display:none; width:100%; height:100%; border-radius:50%; object-fit:cover;">
+                        <div class="avatar-edit-badge">
+                            <span class="material-symbols-outlined" style="font-size: 14px;">edit</span>
+                        </div>
+                    </div>
+                    <input type="file" id="avatar-input" accept="image/*" style="display:none;" onchange="handleAvatarChange(event)">
+                </div>
+                
+                <div class="input-group">
+                    <label for="ob-username">사용자 이름</label>
+                    <input type="text" id="ob-username" placeholder="사용자 이름을 입력하세요">
+                </div>
+                <div class="input-group">
+                    <label for="ob-name">이름</label>
+                    <input type="text" id="ob-name" placeholder="이름을 입력하세요">
+                </div>
+                
+                <div class="onboarding-nav">
+                    <button class="btn btn-primary" onclick="nextOnboardingStep(2)" style="width: 100%;">다음</button>
+                </div>
+            </div>
+            
+            <!-- Step 2: Region Selection -->
+            <div class="onboarding-step-content" id="onboarding-step-2" style="display: none;">
+                <h2 class="onboarding-title">관심 지역 설정</h2>
+                <p class="onboarding-desc">주로 작업하시는 상위 관심 지역을 선택하세요.</p>
+                <div class="region-list">
+                    <div class="region-item" onclick="toggleRegion(this, '서울')">
+                        <span>서울</span>
+                        <span class="check-icon">✓</span>
+                    </div>
+                    <div class="region-item" onclick="toggleRegion(this, '신촌')">
+                        <span>신촌/연희</span>
+                        <span class="check-icon">✓</span>
+                    </div>
+                    <div class="region-item" onclick="toggleRegion(this, '홍대/합정')">
+                        <span>홍대/합정</span>
+                        <span class="check-icon">✓</span>
+                    </div>
+                    <div class="region-item" onclick="toggleRegion(this, '강남')">
+                        <span>강남/역삼</span>
+                        <span class="check-icon">✓</span>
+                    </div>
+                    <div class="region-item" onclick="toggleRegion(this, '판교')">
+                        <span>판교</span>
+                        <span class="check-icon">✓</span>
+                    </div>
+                </div>
+                
+                <div class="onboarding-nav double-btn">
+                    <button class="btn btn-secondary" onclick="prevOnboardingStep(1)">이전</button>
+                    <button class="btn btn-primary" onclick="nextOnboardingStep(3)">다음</button>
+                </div>
+            </div>
+            
+            <!-- Step 3: Curator List -->
+            <div class="onboarding-step-content" id="onboarding-step-3" style="display: none;">
+                <h2 class="onboarding-title">관심 큐레이터 설정</h2>
+                <p class="onboarding-desc">전문 큐레이터를 팔로우하고 추천 카페 정보를 얻어보세요.</p>
+                <div class="curator-list">
+                    <div class="curator-item">
+                        <div class="curator-avatar">☕</div>
+                        <div class="curator-details">
+                            <div class="curator-name">architechu <span class="badge-check">✓</span></div>
+                            <div class="curator-stats">팔로워 35,895 | 데이로그 281</div>
+                            <div class="curator-bio">모든 공간엔 이야기가 있다, 건축가</div>
+                        </div>
+                        <button class="curator-follow-btn" onclick="toggleFollowCurator(this, 'architechu')">+ 팔로우</button>
+                    </div>
+                    <div class="curator-item">
+                        <div class="curator-avatar">🌿</div>
+                        <div class="curator-details">
+                            <div class="curator-name">spot_editor <span class="badge-check">✓</span></div>
+                            <div class="curator-stats">팔로워 32,208 | 데이로그 315</div>
+                            <div class="curator-bio">카페, 공간 덕후가 된 전직 잡지 에디터</div>
+                        </div>
+                        <button class="curator-follow-btn" onclick="toggleFollowCurator(this, 'spot_editor')">+ 팔로우</button>
+                    </div>
+                </div>
+                
+                <div class="onboarding-nav double-btn">
+                    <button class="btn btn-secondary" onclick="prevOnboardingStep(2)">이전</button>
+                    <button class="btn btn-primary" onclick="nextOnboardingStep(4)">다음</button>
+                </div>
+            </div>
+            
+            <!-- Step 4: Finished -->
+            <div class="onboarding-step-content" id="onboarding-step-4" style="display: none;">
+                <h2 class="onboarding-title">설정 완료!</h2>
+                <p class="onboarding-desc" style="text-align: center; margin-top: 30px;">
+                    이제 플러그인 카페에서 실시간 최적의 자리를 찾아보세요.<br>
+                    첫 설정 축하로 **100포인트**가 적립되었습니다! 🪙
+                </p>
+                
+                <div class="onboarding-nav" style="margin-top: 40px;">
+                    <button class="btn btn-primary" onclick="finishOnboarding()" style="width: 100%;">시작하기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Daylog (Review) Modal -->
+    <div class="daylog-modal-overlay" id="daylog-modal-overlay" style="display: none;">
+        <div class="daylog-modal">
+            <div class="daylog-modal-header">
+                <h3>데이로그 등록</h3>
+                <button class="close-daylog-btn" onclick="closeDaylogModal()">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div class="daylog-modal-body">
+                <div class="form-group">
+                    <label for="dl-visit-date">방문일</label>
+                    <input type="date" id="dl-visit-date" class="form-input">
+                </div>
+                
+                <div class="form-group-row">
+                    <label>전체 공개</label>
+                    <label class="switch">
+                        <input type="checkbox" id="dl-is-public" checked>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                
+                <div class="form-group">
+                    <label>사진과 경험을 공유해 주세요 (선택)</label>
+                    <div class="dl-media-row">
+                        <div class="dl-add-photo-card" onclick="document.getElementById('dl-image-input').click()">
+                            <span class="material-symbols-outlined">add_a_photo</span>
+                            <span>사진 선택</span>
+                        </div>
+                        <input type="file" id="dl-image-input" accept="image/*" style="display:none;" onchange="handleDaylogImageSelect(event)">
+                        <div class="dl-photo-preview-container" id="dl-photo-preview-container" style="display:none;">
+                            <img id="dl-photo-preview" src="" alt="Preview">
+                            <button class="dl-remove-photo-btn" onclick="removeDaylogPhoto()">✕</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <textarea id="dl-content" placeholder="공간에서의 경험을 여기에 작성해 주세요. (어떤 좌석에 콘센트가 있고 공부하기 좋았는지 팁을 나눠주시면 유용해요!)"></textarea>
+                </div>
+                
+                <button class="btn btn-primary" onclick="submitDaylog()" style="width:100%; margin-top:20px;">
+                    <span class="material-symbols-outlined">check_circle</span>
+                    <span>데이로그 완료</span>
                 </button>
             </div>
         </div>

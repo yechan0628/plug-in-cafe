@@ -1232,3 +1232,739 @@ body {
 .share-btn:active {
     transform: translateY(0);
 }
+
+/* Onboarding Overlay & Card */
+.onboarding-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(62, 39, 35, 0.4);
+    backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.onboarding-card {
+    background: #FFFFFF;
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    width: 90%;
+    max-width: 460px;
+    padding: 30px;
+    box-sizing: border-box;
+    box-shadow: 0 20px 50px rgba(78, 52, 46, 0.15);
+    position: relative;
+    animation: slideUpFade 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideUpFade {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.skip-onboarding-btn {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    background: transparent;
+    border: none;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-primary-light);
+    cursor: pointer;
+}
+
+.onboarding-steps {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.step-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--color-surface-container);
+    border: 1.5px solid var(--color-border);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-primary-light);
+    transition: all 0.3s;
+}
+
+.step-num.active {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: #FFFFFF;
+}
+
+.step-line {
+    height: 2px;
+    width: 40px;
+    background: var(--color-border);
+    transition: all 0.3s;
+}
+
+.step-line.active {
+    background: var(--color-primary);
+}
+
+.onboarding-title {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-top: 0;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.onboarding-desc {
+    font-size: 13px;
+    color: var(--color-primary-light);
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 24px;
+}
+
+/* Step 1 Profile avatar setup */
+.avatar-setup {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.avatar-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--color-surface-container);
+    border: 2px solid var(--color-border);
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.avatar-placeholder {
+    font-size: 40px;
+    color: var(--color-primary-light);
+}
+
+.avatar-edit-badge {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: #FFFFFF;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #FFFFFF;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+}
+
+.input-group label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+.input-group input {
+    padding: 10px 14px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-family: inherit;
+    background: var(--color-bg);
+    color: var(--color-on-primary-container);
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+}
+
+/* Step 2 Regions */
+.region-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 240px;
+    overflow-y: auto;
+    margin-bottom: 24px;
+    padding-right: 4px;
+}
+
+.region-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+    transition: all 0.2s;
+}
+
+.region-item:hover {
+    background: var(--color-surface-container);
+}
+
+.region-item.active {
+    border-color: var(--color-primary);
+    background: rgba(91, 91, 91, 0.05);
+    color: var(--color-primary);
+}
+
+.check-icon {
+    display: none;
+    font-weight: bold;
+}
+
+.region-item.active .check-icon {
+    display: inline;
+}
+
+/* Step 3 Curators */
+.curator-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.curator-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface);
+}
+
+.curator-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--color-surface-container);
+    border: 1px solid var(--color-border);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+}
+
+.curator-details {
+    flex: 1;
+}
+
+.curator-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+.badge-check {
+    color: var(--color-primary-light);
+    font-size: 11px;
+}
+
+.curator-stats {
+    font-size: 10px;
+    color: var(--color-primary-light);
+    margin-top: 2px;
+}
+
+.curator-bio {
+    font-size: 11px;
+    color: var(--color-primary-light);
+    margin-top: 4px;
+}
+
+.curator-follow-btn {
+    padding: 6px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 20px;
+    border: 1px solid var(--color-primary);
+    background: transparent;
+    color: var(--color-primary);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.curator-follow-btn.following {
+    background: var(--color-primary);
+    color: #FFFFFF;
+    border-color: var(--color-primary);
+}
+
+/* Onboarding navigation buttons */
+.onboarding-nav {
+    display: flex;
+    gap: 12px;
+}
+
+.onboarding-nav.double-btn button {
+    flex: 1;
+}
+
+/* Tab styling on bottom sheet */
+.sheet-header-title {
+    padding: 0 20px;
+    margin-top: 15px;
+}
+
+.sheet-header-title h2 {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--color-primary);
+    margin: 0;
+}
+
+.sheet-cafe-meta {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-primary-light);
+    margin-top: 4px;
+}
+
+.sheet-cafe-meta .star-icon {
+    font-size: 16px;
+    color: #FFB300;
+    fill: #FFB300;
+}
+
+.sheet-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--color-border);
+    padding: 0 20px;
+    margin-top: 15px;
+}
+
+.sheet-tab {
+    padding: 10px 16px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--color-primary-light);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.sheet-tab.active {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+}
+
+.sheet-content-container {
+    padding: 20px;
+    height: calc(100% - 130px);
+    overflow-y: auto;
+}
+
+.sheet-tab-content {
+    display: none;
+}
+
+.sheet-tab-content.active {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+#tab-content-seats {
+    flex-direction: row;
+    gap: 24px;
+}
+
+#tab-content-info {
+    flex-direction: column;
+    gap: 16px;
+}
+
+#tab-content-daylog {
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Detailed Info Styles */
+.info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 14px;
+}
+
+.info-item .material-symbols-outlined {
+    font-size: 20px;
+    color: var(--color-primary-light);
+}
+
+.info-copy-btn {
+    background: var(--color-surface-container);
+    border: 1px solid var(--color-border);
+    padding: 2px 6px;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: var(--radius-sm);
+    margin-left: 8px;
+    cursor: pointer;
+}
+
+.suggest-edit-btn {
+    align-self: flex-start;
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border);
+    background: #FFFFFF;
+    color: var(--color-primary-light);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+}
+
+/* Daylog Styles */
+.daylog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.daylog-write-btn {
+    background: var(--color-primary);
+    color: #FFFFFF;
+    border: none;
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.daylogs-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+}
+
+.daylog-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 16px;
+}
+
+.daylog-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.daylog-user-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--color-primary-container);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+}
+
+.daylog-user-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+.daylog-date {
+    font-size: 11px;
+    color: var(--color-primary-light);
+    margin-left: auto;
+}
+
+.daylog-card-content {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--color-on-primary-container);
+    white-space: pre-line;
+}
+
+.daylog-card-img {
+    width: 100%;
+    max-height: 200px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    margin-top: 12px;
+}
+
+.no-daylogs {
+    text-align: center;
+    color: var(--color-primary-light);
+    padding: 30px 0;
+    font-size: 13px;
+}
+
+/* Daylog Modal Overlay */
+.daylog-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(62, 39, 35, 0.4);
+    backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2100;
+}
+
+.daylog-modal {
+    background: #FFFFFF;
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    width: 90%;
+    max-width: 480px;
+    padding: 24px;
+    box-sizing: border-box;
+    box-shadow: 0 20px 50px rgba(78, 52, 46, 0.15);
+    animation: slideUpFade 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.daylog-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 12px;
+    margin-bottom: 18px;
+}
+
+.daylog-modal-header h3 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 18px;
+    color: var(--color-primary);
+}
+
+.close-daylog-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--color-primary-light);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+.form-input {
+    padding: 10px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    font-size: 13px;
+    background: var(--color-bg);
+}
+
+.form-group-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.form-group-row label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+/* Toggle Switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 20px;
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 14px;
+  width: 14px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: var(--color-primary);
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px var(--color-primary);
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(20px);
+  -ms-transform: translateX(20px);
+  transform: translateX(20px);
+}
+
+.slider.round {
+  border-radius: 20px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.dl-media-row {
+    display: flex;
+    gap: 12px;
+}
+
+.dl-add-photo-card {
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-sm);
+    width: 80px;
+    height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    color: var(--color-primary-light);
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.dl-add-photo-card .material-symbols-outlined {
+    font-size: 24px;
+}
+
+.dl-photo-preview-container {
+    width: 80px;
+    height: 80px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    position: relative;
+}
+
+.dl-photo-preview-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.dl-remove-photo-btn {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: rgba(0,0,0,0.6);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    font-size: 8px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.daylog-modal-body textarea {
+    width: 100%;
+    height: 120px;
+    padding: 12px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    font-size: 13px;
+    box-sizing: border-box;
+    resize: none;
+}
+
+.daylog-modal-body textarea:focus {
+    outline: none;
+    border-color: var(--color-primary);
+}
+

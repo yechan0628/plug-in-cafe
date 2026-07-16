@@ -46,6 +46,11 @@ model Seat {
 model User {
   id        Int      @id @default(1)
   points    Int      @default(1000)
+  username  String?  @db.VarChar(50)
+  name      String?  @db.VarChar(50)
+  avatarUrl String?  @map("avatar_url") @db.VarChar(255)
+  regions   String?  @db.VarChar(255)
+  curators  String?  @db.VarChar(255)
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
 
   @@map("users")
@@ -60,3 +65,17 @@ model Coupon {
 
   @@map("coupons")
 }
+
+model Daylog {
+  id        Int      @id @default(autoincrement())
+  cafeId    Int      @map("cafe_id")
+  userId    Int      @default(1) @map("user_id")
+  visitDate String   @map("visit_date") @db.VarChar(20)
+  isPublic  Boolean  @default(true) @map("is_public")
+  content   String   @db.Text
+  imageUrl  String?  @map("image_url") @db.VarChar(255)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@map("daylogs")
+}
+

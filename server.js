@@ -198,6 +198,7 @@ app.get('/api/user', async (req, res) => {
         });
         
         res.json({
+            user: user,
             points: user.points,
             coupons: processedCoupons
         });
@@ -430,6 +431,82 @@ ${couponsList}
     } catch (err) {
         console.error("Error in AI Chat API:", err);
         res.status(500).json({ error: "AI 추천 서비스 처리 중 오류가 발생했습니다." });
+    }
+});
+
+// 6. Update user profile (Onboarding)
+app.patch('/api/user/profile', async (req, res) => {
+    try {
+        const { username, name, avatarUrl, regions, curators } = req.body;
+        const updatedUser = await prisma.user.update({
+            where: { id: 1 },
+            data: {
+                username: username || undefined,
+                name: name || undefined,
+                avatarUrl: avatarUrl || undefined,
+                regions: regions || undefined,
+                curators: curators || undefined
+            }
+        });
+        res.json(updatedUser);
+    } catch (err) {
+        console.error("Error updating profile:", err);
+        res.status(500).json({ error: "프로필 업데이트에 실패했습니다." });
+    }
+});
+
+// 7. Get daylogs for a specific cafe
+app.get('/api/cafes/:id/daylogs', async (req, res) => {
+    try {
+        const cafeId = parseInt(req.params.id);
+        const daylogs = await prisma.daylog.findMany({
+            where: { cafeId },
+            orderBy: { createdAt: 'desc' }
+        });
+        res.json(daylogs);
+    } catch (err) {
+        console.error("Error fetching daylogs:", err);
+        res.status(500).json({ error: "데이로그 조회에 실패했습니다." });
+    }
+});
+
+// 8. Create a new daylog for a cafe (Rewards +100 points)
+app.post('/api/cafes/:id/daylogs', async (req, res) => {
+    try {
+        const cafeId = parseInt(req.params.id);
+        const { visitDate, isPublic, content, imageUrl } = req.body;
+        
+        if (!content) {
+            return res.status(400).json({ error: "데이로그 내용을 입력해 주세요." });
+        }
+        
+        const user = await getOrCreateDefaultUser();
+        
+        // Create daylog record
+        const newDaylog = await prisma.daylog.create({
+            data: {
+                cafeId,
+                visitDate: visitDate || new Date().toISOString().split('T')[0],
+                isPublic: isPublic !== false,
+                content,
+                imageUrl: imageUrl || null
+            }
+        });
+        
+        // Reward 100 points
+        const updatedUser = await prisma.user.update({
+            where: { id: 1 },
+            data: { points: user.points + 100 }
+        });
+        
+        res.json({
+            daylog: newDaylog,
+            points: updatedUser.points,
+            message: "🎉 데이로그 등록 완료! 보너스 100포인트가 적립되었습니다."
+        });
+    } catch (err) {
+        console.error("Error creating daylog:", err);
+        res.status(500).json({ error: "데이로그 등록에 실패했습니다." });
     }
 });
 
