@@ -108,6 +108,46 @@ async function loadUserRewards() {
             }
         }
         
+        // Update user profile header display
+        if (data.user) {
+            const nameEl = document.getElementById("header-user-name");
+            const idEl = document.getElementById("header-user-id");
+            const avatarImg = document.getElementById("header-avatar-img");
+            const avatarFallback = document.getElementById("header-avatar-fallback");
+            
+            if (nameEl) nameEl.innerText = data.user.name || "방문자";
+            if (idEl) idEl.innerText = data.user.username ? `@${data.user.username}` : "@guest";
+            
+            if (data.user.avatarUrl) {
+                if (avatarImg) {
+                    avatarImg.src = data.user.avatarUrl;
+                    avatarImg.style.display = "block";
+                }
+                if (avatarFallback) avatarFallback.style.display = "none";
+            } else {
+                if (avatarImg) avatarImg.style.display = "none";
+                if (avatarFallback) avatarFallback.style.display = "flex";
+            }
+
+            // Pre-populate onboarding form fields
+            const obUsername = document.getElementById("ob-username");
+            const obName = document.getElementById("ob-name");
+            const obAvatarImg = document.getElementById("avatar-img");
+            const obAvatarIcon = document.getElementById("avatar-placeholder-icon");
+            
+            if (obUsername) obUsername.value = data.user.username || "";
+            if (obName) obName.value = data.user.name || "";
+            
+            if (data.user.avatarUrl) {
+                if (obAvatarImg) {
+                    obAvatarImg.src = data.user.avatarUrl;
+                    obAvatarImg.style.display = "block";
+                }
+                if (obAvatarIcon) obAvatarIcon.style.display = "none";
+                onboardingData.avatarUrl = data.user.avatarUrl;
+            }
+        }
+        
         // Check onboarding completion
         if (data.user && (!data.user.username || !data.user.name)) {
             document.getElementById("onboarding-overlay").style.display = "flex";
@@ -1426,4 +1466,9 @@ function recenterMap() {
         mapSvg.setAttribute("viewBox", `0 0 1000 700`);
         showToast("🗺️ 전체 지도를 홈 위치로 재정렬했습니다.");
     }
+}
+
+function openOnboardingManual() {
+    nextOnboardingStep(1);
+    document.getElementById("onboarding-overlay").style.display = "flex";
 }
