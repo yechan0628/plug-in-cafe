@@ -298,7 +298,7 @@ body {
 .map-container {
     flex: 1;
     position: relative;
-    background-color: #EFEBE9;
+    background-color: #F4F3F0;
 }
 
 #map-svg {
