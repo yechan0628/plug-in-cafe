@@ -1,52 +1,52 @@
 ---
-name: Espresso Minimalist
+name: Espresso Minimalist (Reference Matched)
 colors:
-  background: '#FAF8F6'
-  on-background: '#3E2723'
+  background: '#FCFFFE'
+  on-background: '#5B5B5B'
   surface: '#FFFFFF'
-  surface-dim: '#FAF8F6'
+  surface-dim: '#FCFFFE'
   surface-bright: '#FFFFFF'
   surface-container-lowest: '#FFFFFF'
-  surface-container-low: '#FBF9F7'
+  surface-container-low: '#FDFEFE'
   surface-container: '#F5F2EE'
   surface-container-high: '#EFECE9'
   surface-container-highest: '#E4DFDA'
-  on-surface: '#3E2723'
-  on-surface-variant: '#8D6E63'
-  inverse-surface: '#3E2723'
-  inverse-on-surface: '#FAF8F6'
-  outline: '#D7CCC8'
-  outline-variant: '#BCAAA4'
-  surface-tint: '#4E342E'
-  primary: '#4E342E'
+  on-surface: '#5B5B5B'
+  on-surface-variant: '#928E88'
+  inverse-surface: '#5B5B5B'
+  inverse-on-surface: '#FCFFFE'
+  outline: '#EFECE9'
+  outline-variant: '#D7CCC8'
+  surface-tint: '#5B5B5B'
+  primary: '#5B5B5B'
   on-primary: '#FFFFFF'
-  primary-container: '#D7CCC8'
-  on-primary-container: '#3E2723'
-  inverse-primary: '#8D6E63'
-  secondary: '#8D6E63'
+  primary-container: '#EFECE9'
+  on-primary-container: '#5B5B5B'
+  inverse-primary: '#928E88'
+  secondary: '#928E88'
   on-secondary: '#FFFFFF'
   secondary-container: '#F5F2EE'
-  on-secondary-container: '#4E342E'
-  tertiary: '#5D4037'
+  on-secondary-container: '#5B5B5B'
+  tertiary: '#848178'
   on-tertiary: '#FFFFFF'
-  tertiary-container: '#D7CCC8'
-  on-tertiary-container: '#3E2723'
-  error: '#D84315'
+  tertiary-container: '#EFECE9'
+  on-tertiary-container: '#5B5B5B'
+  error: '#C77D67'
   on-error: '#FFFFFF'
-  error-container: '#FFCCBC'
-  on-error-container: '#D84315'
-  primary-fixed: '#D7CCC8'
-  primary-fixed-dim: '#BCAAA4'
-  on-primary-fixed: '#3E2723'
-  on-primary-fixed-variant: '#4E342E'
-  secondary-fixed: '#EFECE9'
-  secondary-fixed-dim: '#D7CCC8'
-  on-secondary-fixed: '#4E342E'
-  on-secondary-fixed-variant: '#8D6E63'
+  error-container: '#FFEBEE'
+  on-error-container: '#C77D67'
+  primary-fixed: '#EFECE9'
+  primary-fixed-dim: '#D7CCC8'
+  on-primary-fixed: '#5B5B5B'
+  on-primary-fixed-variant: '#848178'
+  secondary-fixed: '#F5F2EE'
+  secondary-fixed-dim: '#EFECE9'
+  on-secondary-fixed: '#5B5B5B'
+  on-secondary-fixed-variant: '#928E88'
   tertiary-fixed: '#E4DFDA'
-  tertiary-fixed-dim: '#BCAAA4'
-  on-tertiary-fixed: '#3E2723'
-  on-tertiary-fixed-variant: '#5D4037'
+  tertiary-fixed-dim: '#D7CCC8'
+  on-tertiary-fixed: '#5B5B5B'
+  on-tertiary-fixed-variant: '#848178'
   surface-variant: '#F5F2EE'
 typography:
   display-lg:
@@ -110,53 +110,29 @@ spacing:
   margin-desktop: 32px
 ---
 
-# ☕ Plug-In Cafe 브랜드 & 디자인 시스템 가이드
+# ☕ Plug-In Cafe 브랜드 & 디자인 시스템 가이드 (레퍼런스 정밀 연동)
 
-본 가이드는 사용자님이 제공하신 **데이트립 감성 카페 레퍼런스 이미지(원목 가구, 따뜻한 톤, 미니멀리즘 레이아웃)**를 기반으로 설계된 **Espresso Minimalist** 디자인 시스템 명세입니다.
-
----
-
-## 1. 디자인 철학 및 감성 (Brand Vibe)
-제공된 데이트립 레퍼런스는 **원목의 질감, 은은하게 퍼지는 전구색 조명, 그리고 여백의 미가 돋보이는 모던 미니멀리즘**을 보여주고 있습니다. 
-* **감성적 가치**: 집중하기 좋은 아늑함(Cozy focus), 프리미엄 디자이너 아지트(Premium retreat), 시각적 편안함(Visual comfort)
-* **방향성**: 어둡고 칙칙한 검정색이 아닌 따뜻한 크림빛이 도는 오프화이트(#FAF8F6)를 기본 배경으로 삼고, 에스프레소 브라운(#4E342E)과 중후한 월넛 목재톤(#8D6E63)을 주조색 및 보조색으로 배치합니다.
+본 가이드는 사용자님이 제공하신 **데이트립 감성 카페 레퍼런스 이미지**에서 추출한 **실제 지배적 색채 스키마**를 기반으로 설계된 디자인 시스템 명세입니다.
 
 ---
 
-## 2. 컬러 스키마 (Colors)
-레퍼런스 이미지의 따뜻한 조명색과 원목 고유의 가구 색채를 추출하여 구성한 컬러 팔레트입니다.
+## 1. 레퍼런스 컬러 추출 분석 결과
+Pillow 라이브러리를 통해 데이트립 웹피 레퍼런스 이미지에서 추출된 실제 주요 색상 값들은 다음과 같습니다:
 
-* **Primary Brown (#4E342E - Deep Espresso)**:
-  * 앱의 가장 강조되는 핵심 브랜딩 컬러입니다. 로고, 주요 텍스트, 활성화 단추 등에 사용하여 견고한 원목 가구의 중심을 형상화합니다.
-* **Secondary Timber (#8D6E63 - Medium Walnut)**:
-  * 서브 정보, 덜 강조되는 버튼 보더, 카테고리 필터 등의 톤을 조율합니다.
-* **Warm Base Off-White (#FAF8F6 - Cream Parchment)**:
-  * 눈의 피로를 최소화하기 위한 은은한 배경색입니다.
-* **Matcha Green (#4CAF50 - Available Seat)**:
-  * 사용 가능한 좌석의 활성 뱃지로 자연에서 온 편안한 녹색 톤을 차용했습니다.
-* **Terracotta Red (#D84315 - Occupied Seat)**:
-  * 사용 중이거나 선점된 좌석을 표시하기 위한 흙빛의 차분한 주황색 계열입니다.
-
----
-
-## 3. 타이포그래피 (Typography)
-기하학적이면서도 세련된 인상을 주는 **Outfit**을 타이틀에 사용하여 감성적인 매거진 레이아웃 느낌을 주고, 본문에는 가독성이 입증된 **Inter** 폰트를 크기와 자간을 조절해 적용합니다.
-
-* **대형 제목 (display-lg)**: 38px (두께 800) - 카페 로고 텍스트 및 상세페이지 헤더에 활용
-* **본문 텍스트 (body-lg / body-sm)**: 15px / 13px (두께 400) - 설명글 및 실시간 현황 수치
-* **레이블 텍스트 (label-bold)**: 12px (두께 700) - 버튼명, 상태 표시창
+1. **배경색 (Background - #FCFFFE)**:
+   * 이미지들의 전체 배경을 채우는 소프트하고 밝은 톤의 **크림 오프화이트**
+2. **주조 텍스트 및 프레임 (Primary - #5B5B5B)**:
+   * 레퍼런스 이미지 `imgi_22`에서 매칭되는 차분한 **차콜 월넛**톤
+3. **가구 및 중간 계열 색상 (Secondary - #928E88)**:
+   * 이미지 `imgi_34` 등 가구 가림막과 벽면에 칠해진 따뜻한 **스톤 샌드**톤
+4. **사용 가능 좌석 상태 색상 (Matcha - #D6E2D8)**:
+   * 이미지 `imgi_102`에서 추출한 식물/그리너리 소품 톤의 **소프트 세이지 그린**
+5. **사용 불가/점유 좌석 상태 색상 (Terracotta - #C77D67)**:
+   * 따뜻한 전구색 불빛이 닿은 목재 구석과 토기 소품에서 추출된 **테라코타 클레이**톤
 
 ---
 
-## 4. 형태 및 라운드 (Shapes & Border Radius)
-레퍼런스에서 볼 수 있는 정갈하고 정돈된 가구와 건물 기하 구조를 반영하여, 너무 뾰족하거나 둥글지 않은 최적의 모서리 곡률을 유지합니다.
+## 2. 디자인 적용 규격
 
-* **일반 요소 (0.5rem - 8px)**: 카드 컴포넌트, 입력 창, 챗봇 입력 박스
-* **좌석 아이콘 (0.25rem - 4px)**: 직관적인 형태 유지를 위해 모서리를 살짝만 라운딩 처리
-* **대형 배너 및 바텀시트 (1.0rem - 16px)**: 소프트한 공간 분할감을 위한 곡선감 적용
-
----
-
-## 5. rhythm (Spacing)
-* **8px 그리드 시스템**: 모든 내부 패딩과 마진은 8px 단위를 기준으로 배수 적용하여 일관된 조형적 비례를 유지합니다. (xs: 8px, sm: 12px, md: 16px, lg: 24px)
-* **여백의 미**: 컴포넌트 간 충분한 여백(gutter 16px)을 두어 정보의 과부하를 막고, 데이트립 특유의 차분하고 고급스러운 공간 연출을 구현합니다.
+* **텍스트**: 주조색 `#5B5B5B`를 베이스로 하여 부드러운 검정 느낌을 주며, 메타 데이터 정보는 보조색 `#928E88`로 구성해 시각적 피로도를 최대한 낮춥니다.
+* **좌석 및 그리드 상태**: 기존의 자극적인 원색(빨강, 녹색) 대신, 레퍼런스 조화에 맞추어 점유 가능 좌석은 `#D6E2D8`, 이미 사용 중인 좌석은 `#C77D67`로 파스텔 톤온톤 스타일을 유지합니다.
