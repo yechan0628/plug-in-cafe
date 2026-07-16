@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plug-In Cafe - Visual Design System Style Guide</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-bg: #FAF8F6;
+            --color-primary: #4E342E;
+            --color-primary-light: #8D6E63;
+            --color-primary-container: #D7CCC8;
+            --color-on-primary-container: #3E2723;
+            --color-surface: #FFFFFF;
+            --color-surface-container: #F5F2EE;
+            --color-border: #D7CCC8;
+            --color-status-free: #4CAF50;
+            --color-status-busy: #D84315;
+            
+            --font-display: 'Outfit', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+        }
+
+        body {
+            background-color: var(--color-bg);
+            color: var(--color-on-primary-container);
+            font-family: var(--font-body);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 10px 40px rgba(78, 52, 46, 0.05);
+            padding: 40px;
+            box-sizing: border-box;
+        }
+
+        header {
+            border-bottom: 2px solid var(--color-border);
+            padding-bottom: 20px;
+            margin-bottom: 40px;
+        }
+
+        .logo-text {
+            font-family: var(--font-display);
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--color-primary);
+            margin: 0 0 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .subtitle {
+            font-size: 15px;
+            color: var(--color-primary-light);
+            margin: 0;
+        }
+
+        h2 {
+            font-family: var(--font-display);
+            font-size: 20px;
+            font-weight: 700;
+            border-left: 4px solid var(--color-primary);
+            padding-left: 12px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            color: var(--color-primary);
+        }
+
+        /* Color Section */
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+        }
+
+        .color-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .color-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .color-swatch {
+            height: 100px;
+        }
+
+        .color-info {
+            padding: 12px;
+        }
+
+        .color-name {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .color-hex {
+            font-size: 11px;
+            color: var(--color-primary-light);
+            font-family: monospace;
+        }
+
+        /* Typography Section */
+        .typo-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .typo-table th, .typo-table td {
+            text-align: left;
+            padding: 14px;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .typo-table th {
+            font-weight: 700;
+            color: var(--color-primary);
+            font-size: 14px;
+        }
+
+        .sample-display {
+            font-family: var(--font-display);
+            font-size: 38px;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .sample-headline {
+            font-family: var(--font-display);
+            font-size: 26px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .sample-body {
+            font-family: var(--font-body);
+            font-size: 15px;
+            font-weight: 400;
+            margin: 0;
+        }
+
+        .sample-label {
+            font-family: var(--font-body);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            margin: 0;
+        }
+
+        /* UI Components Section */
+        .components-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+        }
+
+        .component-box {
+            flex: 1;
+            min-width: 280px;
+            background: var(--color-surface-container);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: 24px;
+        }
+
+        .component-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--color-primary-light);
+            margin-bottom: 16px;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            font-size: 13px;
+            font-weight: 700;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: var(--color-primary);
+            color: #FFFFFF;
+        }
+
+        .btn-primary:hover {
+            background-color: #3E2723;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            border: 1px solid var(--color-primary);
+            color: var(--color-primary);
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(78, 52, 46, 0.05);
+            transform: translateY(-1px);
+        }
+
+        .chip {
+            background: #FFFFFF;
+            border: 1px solid var(--color-border);
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--color-primary);
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-right: 8px;
+        }
+
+        .chip:hover {
+            background: var(--color-primary);
+            color: #FFFFFF;
+            border-color: var(--color-primary);
+        }
+
+        /* Status Badge */
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .status-free {
+            background-color: #E8F5E9;
+            color: var(--color-status-free);
+        }
+
+        .status-busy {
+            background-color: #FFEBEE;
+            color: var(--color-status-busy);
+        }
+
+        .toast-preview {
+            background: rgba(78, 52, 46, 0.95);
+            color: #FFF;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-text">
+                <span class="material-symbols-outlined" style="font-size:32px;">bolt</span>
+                <span>Plug-In Cafe</span>
+            </div>
+            <p class="subtitle">Espresso Minimalist Design System Style Guide (데스크탑/모바일 공용)</p>
+        </header>
+
+        <h2>1. Color Swatches (색상 팔레트)</h2>
+        <div class="color-grid">
+            <div class="color-card">
+                <div class="color-swatch" style="background-color: var(--color-primary);"></div>
+                <div class="color-info">
+                    <span class="color-name">Primary (Espresso)</span>
+                    <span class="color-hex">#4E342E</span>
+                </div>
+            </div>
+            <div class="color-card">
+                <div class="color-card-swatch color-swatch" style="background-color: var(--color-primary-light);"></div>
+                <div class="color-info">
+                    <span class="color-name">Secondary (Timber)</span>
+                    <span class="color-hex">#8D6E63</span>
+                </div>
+            </div>
+            <div class="color-card">
+                <div class="color-card-swatch color-swatch" style="background-color: var(--color-primary-container);"></div>
+                <div class="color-info">
+                    <span class="color-name">Container (Latte)</span>
+                    <span class="color-hex">#D7CCC8</span>
+                </div>
+            </div>
+            <div class="color-card">
+                <div class="color-card-swatch color-swatch" style="background-color: var(--color-surface-container);"></div>
+                <div class="color-info">
+                    <span class="color-name">Stone Container</span>
+                    <span class="color-hex">#F5F2EE</span>
+                </div>
+            </div>
+            <div class="color-card">
+                <div class="color-card-swatch color-swatch" style="background-color: var(--color-status-free);"></div>
+                <div class="color-info">
+                    <span class="color-name">Available (Matcha)</span>
+                    <span class="color-hex">#4CAF50</span>
+                </div>
+            </div>
+            <div class="color-card">
+                <div class="color-card-swatch color-swatch" style="background-color: var(--color-status-busy);"></div>
+                <div class="color-info">
+                    <span class="color-name">Occupied (Terracotta)</span>
+                    <span class="color-hex">#D84315</span>
+                </div>
+            </div>
+        </div>
+
+        <h2>2. Typography (타이포그래피 스케일)</h2>
+        <table class="typo-table">
+            <thead>
+                <tr>
+                    <th style="width: 25%;">유형 (Token)</th>
+                    <th style="width: 25%;">폰트 정보 (Font Spec)</th>
+                    <th>렌더링 샘플 (Render Sample)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>display-lg</strong></td>
+                    <td>Outfit / 38px / 800</td>
+                    <td><p class="sample-display">Plug-In Cafe 38</p></td>
+                </tr>
+                <tr>
+                    <td><strong>headline-lg</strong></td>
+                    <td>Outfit / 26px / 700</td>
+                    <td><p class="sample-headline">스타벅스 신촌역점 26</p></td>
+                </tr>
+                <tr>
+                    <td><strong>body-lg</strong></td>
+                    <td>Inter / 15px / 400</td>
+                    <td><p class="sample-body">실시간 좌석 및 콘센트 현황을 정교하게 관리합니다.</p></td>
+                </tr>
+                <tr>
+                    <td><strong>label-bold</strong></td>
+                    <td>Inter / 12px / 700</td>
+                    <td><p class="sample-label">실시간 좌석현황 공유하기</p></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>3. UI Components (대표 컴포넌트 실물)</h2>
+        <div class="components-row">
+            <div class="component-box">
+                <span class="component-title">Buttons & Chips</span>
+                <div style="display: flex; flex-direction: column; gap: 12px; align-items: flex-start;">
+                    <button class="btn btn-primary">
+                        <span class="material-symbols-outlined" style="font-size:18px;">share</span>
+                        <span>실시간 좌석현황 공유하기</span>
+                    </button>
+                    <button class="btn btn-secondary">상세 도면 닫기</button>
+                    <div>
+                        <button class="chip">⏰ 영업시간 안내</button>
+                        <button class="chip">🚗 무료 주차</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="component-box">
+                <span class="component-title">Badges & Toast</span>
+                <div style="display: flex; flex-direction: column; gap: 16px; align-items: flex-start;">
+                    <div>
+                        <span class="status-badge status-free">이용 가능 (Available)</span>
+                        <span class="status-badge status-busy" style="margin-left: 8px;">사용 중 (Occupied)</span>
+                    </div>
+                    
+                    <div class="toast-preview">
+                        <span class="material-symbols-outlined" style="font-size: 16px; color: #FFD54F;">stars</span>
+                        <span>새 쿠폰 발급 완료! (보너스 +100 P 적립) 🎟️</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
