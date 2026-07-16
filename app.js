@@ -305,39 +305,54 @@ function renderMap() {
         marker.setAttribute("style", "cursor: pointer;");
         
         if (isActive) {
-            // Selected Pin shape (Droplet/Circle marker style from imgi_83/102)
+            // Selected Pin shape (Droplet/Circle marker style with active branding logo)
             // Outer glow circle
             const glow = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-            glow.setAttribute("r", "22");
-            glow.setAttribute("fill", "rgba(91, 91, 91, 0.12)");
-            glow.setAttribute("cy", "-15");
+            glow.setAttribute("r", "25");
+            glow.setAttribute("fill", "rgba(91, 91, 91, 0.15)");
+            glow.setAttribute("cy", "-20");
             glow.setAttribute("cx", "0");
             
-            // White circular background with dark border
-            const pinBg = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-            pinBg.setAttribute("r", "14");
-            pinBg.setAttribute("fill", "#FFFFFF");
-            pinBg.setAttribute("stroke", "#5B5B5B");
-            pinBg.setAttribute("stroke-width", "3.5");
-            pinBg.setAttribute("cy", "-15");
-            pinBg.setAttribute("cx", "0");
+            // White circular background with thick dark border
+            const pinBorderCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            pinBorderCircle.setAttribute("r", "16");
+            pinBorderCircle.setAttribute("fill", "#FFFFFF");
+            pinBorderCircle.setAttribute("stroke", "#5B5B5B");
+            pinBorderCircle.setAttribute("stroke-width", "3");
+            pinBorderCircle.setAttribute("cy", "-20");
+            pinBorderCircle.setAttribute("cx", "0");
             
-            // Icon (Star/Location pin icon)
-            const pinIcon = document.createElementNS("http://www.w3.org/2000/svg", "text");
-            pinIcon.textContent = "★";
-            pinIcon.setAttribute("y", "-10");
-            pinIcon.setAttribute("x", "0");
-            pinIcon.setAttribute("text-anchor", "middle");
-            pinIcon.setAttribute("fill", "#5B5B5B");
-            pinIcon.setAttribute("font-size", "13px");
-            pinIcon.setAttribute("font-weight", "900");
+            // Logo Image Circle using the SVG pattern
+            const logoCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            logoCircle.setAttribute("r", "13");
+            logoCircle.setAttribute("fill", `url(#logo-pattern-${cafe.id})`);
+            logoCircle.setAttribute("cy", "-20");
+            logoCircle.setAttribute("cx", "0");
+            
+            // Selected star badge at top-right
+            const badgeBg = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            badgeBg.setAttribute("r", "5.5");
+            badgeBg.setAttribute("fill", "#FFD54F");
+            badgeBg.setAttribute("stroke", "#5B5B5B");
+            badgeBg.setAttribute("stroke-width", "1.5");
+            badgeBg.setAttribute("cy", "-30");
+            badgeBg.setAttribute("cx", "11");
+            
+            const badgeIcon = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            badgeIcon.textContent = "★";
+            badgeIcon.setAttribute("y", "-27.5");
+            badgeIcon.setAttribute("x", "11");
+            badgeIcon.setAttribute("text-anchor", "middle");
+            badgeIcon.setAttribute("fill", "#5B5B5B");
+            badgeIcon.setAttribute("font-size", "7px");
+            badgeIcon.setAttribute("font-weight", "900");
             
             // Rounded label card underneath
             const labelBg = document.createElementNS("http://www.w3.org/2000/svg", "rect");
             const textLen = cafe.name.length;
             const labelWidth = textLen * 10 + 20;
             labelBg.setAttribute("x", `${-labelWidth / 2}`);
-            labelBg.setAttribute("y", "8");
+            labelBg.setAttribute("y", "5");
             labelBg.setAttribute("width", `${labelWidth}`);
             labelBg.setAttribute("height", "22");
             labelBg.setAttribute("rx", "11");
@@ -345,7 +360,7 @@ function renderMap() {
             
             const labelText = document.createElementNS("http://www.w3.org/2000/svg", "text");
             labelText.textContent = cafe.name;
-            labelText.setAttribute("y", "22");
+            labelText.setAttribute("y", "19");
             labelText.setAttribute("x", "0");
             labelText.setAttribute("text-anchor", "middle");
             labelText.setAttribute("fill", "#FCFFFE");
@@ -353,30 +368,43 @@ function renderMap() {
             labelText.setAttribute("font-weight", "700");
             
             marker.appendChild(glow);
-            marker.appendChild(pinBg);
-            marker.appendChild(pinIcon);
+            marker.appendChild(pinBorderCircle);
+            marker.appendChild(logoCircle);
+            marker.appendChild(badgeBg);
+            marker.appendChild(badgeIcon);
             marker.appendChild(labelBg);
             marker.appendChild(labelText);
         } else {
-            // Inactive Pin shape (Smaller, subtle dot pin from imgi_102)
+            // Inactive Pin shape (Subtle circular branding logo)
+            // Outer background circle
             const pinBg = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-            pinBg.setAttribute("r", "8");
+            pinBg.setAttribute("r", "12");
             pinBg.setAttribute("fill", "#FFFFFF");
             pinBg.setAttribute("stroke", hasFreePlug ? "#D6E2D8" : "#E4DFDA");
             pinBg.setAttribute("stroke-width", "2");
-            pinBg.setAttribute("cy", "-10");
+            pinBg.setAttribute("cy", "-15");
             pinBg.setAttribute("cx", "0");
             
-            const pinDot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-            pinDot.setAttribute("r", "3.5");
-            pinDot.setAttribute("fill", hasFreePlug ? "#5B5B5B" : "#BCAAA4");
-            pinDot.setAttribute("cy", "-10");
-            pinDot.setAttribute("cx", "0");
+            // Logo Image Circle using the SVG pattern
+            const logoCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            logoCircle.setAttribute("r", "10");
+            logoCircle.setAttribute("fill", `url(#logo-pattern-${cafe.id})`);
+            logoCircle.setAttribute("cy", "-15");
+            logoCircle.setAttribute("cx", "0");
+            
+            // Status tiny dot at top-right
+            const statusDot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            statusDot.setAttribute("r", "3");
+            statusDot.setAttribute("fill", hasFreePlug ? "#D6E2D8" : "#E4DFDA");
+            statusDot.setAttribute("stroke", "#FFFFFF");
+            statusDot.setAttribute("stroke-width", "1");
+            statusDot.setAttribute("cy", "-23");
+            statusDot.setAttribute("cx", "8");
             
             // Simple text label without rect
             const labelText = document.createElementNS("http://www.w3.org/2000/svg", "text");
             labelText.textContent = cafe.name;
-            labelText.setAttribute("y", "14");
+            labelText.setAttribute("y", "9");
             labelText.setAttribute("x", "0");
             labelText.setAttribute("text-anchor", "middle");
             labelText.setAttribute("fill", "#928E88");
@@ -384,7 +412,8 @@ function renderMap() {
             labelText.setAttribute("font-weight", "600");
             
             marker.appendChild(pinBg);
-            marker.appendChild(pinDot);
+            marker.appendChild(logoCircle);
+            marker.appendChild(statusDot);
             marker.appendChild(labelText);
         }
         
